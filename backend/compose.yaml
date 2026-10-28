@@ -1,0 +1,17 @@
+# Base de datos para desarrollo local.
+# Con la dependencia "Docker Compose Support", Spring Boot levanta este contenedor
+# solo al arrancar la aplicación y se conecta sin configurar URL ni contraseña.
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: ram
+      POSTGRES_USER: ram
+      POSTGRES_PASSWORD: ram
+    ports:
+      - "5432"
+    volumes:
+      - ram-datos:/var/lib/postgresql
+
+volumes:
+  ram-datos:

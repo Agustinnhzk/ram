@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: ram
+  jpa:
+    # La sesión de base de datos no queda abierta hasta la vista: evita consultas escondidas.
+    open-in-view: false
+    hibernate:
+      # Las tablas las crea Flyway. Hibernate solo verifica que coincidan con las entidades.
+      ddl-auto: validate
+    properties:
+      # Filtro automático por taller en toda entidad con @TenantId (ADR-005).
+      hibernate.tenant_identifier_resolver: com.ram.tenants.adaptadores.persistencia.ResolvedorTallerHibernate
+
+ram:
+  plataforma:
+    # En desarrollo: http://ram.localhost:8080 resuelve al taller con slug "ram".
+    # Los navegadores y curl resuelven *.localhost a tu propia máquina, sin tocar nada.
+    dominio-base: localhost

@@ -1,0 +1,8 @@
+# Configuración local de IntelliJ
+.idea/
+*.iml
+out/
+
+# Sistema operativo
+Thumbs.db
+.DS_Store
