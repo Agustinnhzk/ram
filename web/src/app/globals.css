@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+/*
+ * Identidad de R.A.M., tomada de sus flyers.
+ *
+ * Los colores se nombran por su FUNCIÓN (fondo, principal, suave), no por su tono (negro, plata):
+ * así el mismo nombre sirve en modo oscuro y en modo claro, y solo cambia el valor.
+ *
+ * Modo oscuro: el de siempre, el que se ve al entrar.
+ * Modo claro: se activa con el botón del encabezado, que pone data-tema="claro" en <html>.
+ */
+:root {
+  color-scheme: dark;
+  --fondo: #000000;
+  --superficie: #15110a;
+  --borde: #3a2d16;
+  --principal: #ececec;
+  --suave: #b8ae9c;
+  --oro: #e3b04b;
+  --oro-claro: #f7d684;
+  --oro-profundo: #9a6a1c;
+  /* El metal de los títulos: de plata a oro. */
+  --metal: linear-gradient(180deg, #ffffff 0%, #d9d9d9 42%, #f7d684 58%, #e3b04b 78%, #9a6a1c 100%);
+}
+
+[data-tema="claro"] {
+  color-scheme: light;
+  --fondo: #ffffff;
+  --superficie: #f4f2ef;
+  --borde: #e2d6bd;
+  --principal: #2e2e2e;
+  --suave: #6b6255;
+  /* Sobre blanco, el dorado brillante casi no se lee: los textos dorados se oscurecen. */
+  --oro: #9a6a1c;
+  --oro-claro: #7d5410;
+  --oro-profundo: #6b470c;
+  /* Sobre blanco, la plata desaparece: el metal va de grafito a oro. */
+  --metal: linear-gradient(180deg, #4a4a4a 0%, #2e2e2e 42%, #b98a2c 58%, #9a6a1c 78%, #6b470c 100%);
+}
+
+/* "inline": las clases usan la variable directamente, así cambian al cambiar el tema. */
+@theme inline {
+  --color-fondo: var(--fondo);
+  --color-superficie: var(--superficie);
+  --color-borde: var(--borde);
+  --color-principal: var(--principal);
+  --color-suave: var(--suave);
+  --color-oro: var(--oro);
+  --color-oro-claro: var(--oro-claro);
+  --color-oro-profundo: var(--oro-profundo);
+}
+
+/* Colores que no cambian con el tema. */
+@theme {
+  /* El texto sobre los botones dorados: siempre negro. */
+  --color-negro: #000000;
+  --color-whatsapp: #25d366;
+
+  --font-display: "Exo 2 Variable", "Arial Narrow", sans-serif;
+  --font-sans: "Barlow", system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    background: var(--fondo);
+    color: var(--principal);
+    font-family: var(--font-sans);
+    font-size: 106.25%; /* 17px: Barlow es angosta y se lee mejor un punto más grande */
+    scroll-behavior: smooth;
+  }
+
+  body {
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  /* Foco visible para quien navega con teclado, en el dorado de la marca. */
+  :focus-visible {
+    outline: 2px solid var(--oro-claro);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}
+
+@layer components {
+  .texto-metalico {
+    background: var(--metal);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* El botón dorado es igual en los dos temas: es la pieza más reconocible de la marca. */
+  .boton-oro {
+    background: linear-gradient(180deg, #f7d684, #e3b04b 55%, #9a6a1c);
+    color: #000000;
+  }
+
+  /* El brillo del pedestal del holograma: la única animación de la página. */
+  .brillo-holograma {
+    background: radial-gradient(closest-side, rgb(247 214 132 / 0.55), rgb(227 176 75 / 0.18) 55%, transparent 75%);
+    animation: latido 4.5s ease-in-out infinite;
+  }
+
+  @keyframes latido {
+    0%,
+    100% {
+      opacity: 0.55;
+      transform: scale(0.96);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.04);
+    }
+  }
+
+  /* El botón de tema muestra el ícono del modo AL QUE VA: luna en claro, sol en oscuro. */
+  .icono-sol {
+    display: block;
+  }
+  .icono-luna {
+    display: none;
+  }
+  [data-tema="claro"] .icono-sol {
+    display: none;
+  }
+  [data-tema="claro"] .icono-luna {
+    display: block;
+  }
+}
+
+/*
+ * En modo claro, el holograma (que es una imagen sobre fondo negro) va dentro de un panel oscuro,
+ * como una vidriera: así se ve intencional y no como una mancha sobre el blanco.
+ */
+[data-tema="claro"] .escenario-holograma {
+  background: radial-gradient(ellipse at 50% 70%, #1d160b, #000000 70%);
+  border: 1px solid var(--borde);
+  border-radius: 2rem;
+  padding: 1.25rem;
+}
