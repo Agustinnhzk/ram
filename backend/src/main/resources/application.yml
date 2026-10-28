@@ -10,9 +10,20 @@ spring:
     properties:
       # Filtro automático por taller en toda entidad con @TenantId (ADR-005).
       hibernate.tenant_identifier_resolver: com.ram.tenants.adaptadores.persistencia.ResolvedorTallerHibernate
+  session:
+    jdbc:
+      # Las tablas de sesiones las crea Flyway (V5), no Spring Session.
+      initialize-schema: never
+
+server:
+  servlet:
+    session:
+      # Se cierra tras 4 horas SIN ACTIVIDAD (no 4 horas desde el login).
+      timeout: 4h
 
 ram:
   plataforma:
     # En desarrollo: http://ram.localhost:8080 resuelve al taller con slug "ram".
     # Los navegadores y curl resuelven *.localhost a tu propia máquina, sin tocar nada.
     dominio-base: localhost
+  # El dueño inicial NO va acá (este archivo está en git): va en backend/config/application.yml.

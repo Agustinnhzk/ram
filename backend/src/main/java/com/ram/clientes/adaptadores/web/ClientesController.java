@@ -25,8 +25,8 @@ import java.util.UUID;
 /**
  * Endpoints del sistema de gestión para clientes.
  *
- * <p>ATENCIÓN: todavía no hay login (llega con el módulo usuarios), así que esto es solo
- * para desarrollo local. No se deploya nada de /api/sistema antes de tener autenticación.
+ * <p>Como todo /api/sistema, solo responde a personal del taller logueado (ADR-006):
+ * la regla está en la configuración de seguridad, no acá.
  *
  * <pre>
  * GET  /api/sistema/clientes?nombre=agus        buscar (autocompletado del formulario de ingreso)
