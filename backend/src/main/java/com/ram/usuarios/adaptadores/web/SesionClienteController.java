@@ -1,11 +1,13 @@
 package com.ram.usuarios.adaptadores.web;
 
+import com.ram.usuarios.TipoDeCuenta;
 import com.ram.usuarios.UsuarioAutenticado;
 import com.ram.usuarios.adaptadores.seguridad.SesionWeb;
 import com.ram.usuarios.aplicacion.ServicioDeAcceso;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,10 +33,12 @@ class SesionClienteController {
 
     private final ServicioDeAcceso acceso;
     private final SesionWeb sesionWeb;
+    private final LimitadorDeIngresos limitador;
 
-    SesionClienteController(ServicioDeAcceso acceso, SesionWeb sesionWeb) {
+    SesionClienteController(ServicioDeAcceso acceso, SesionWeb sesionWeb, LimitadorDeIngresos limitador) {
         this.acceso = acceso;
         this.sesionWeb = sesionWeb;
+        this.limitador = limitador;
     }
 
     @PostMapping("/registro")
@@ -46,13 +50,21 @@ class SesionClienteController {
 
     @PostMapping("/sesion")
     SesionResponse iniciar(@RequestBody Credenciales credenciales, HttpServletRequest request, HttpServletResponse response) {
-        var resultado = acceso.iniciarSesionCliente(credenciales.correo(), credenciales.clave());
+        var resultado = limitador.proteger(request.getRemoteAddr(), credenciales.correo(),
+                () -> acceso.iniciarSesionCliente(credenciales.correo(), credenciales.clave()));
         return SesionResponse.de(sesionWeb.iniciar(resultado, request, response));
     }
 
+    /**
+     * Quién está logueado. Sin sesión de cliente responde 204 (vacío), no 401: la tienda lo pregunta en cada
+     * página para armar el encabezado, y no estar logueado ahí es lo normal, no un error.
+     */
     @GetMapping("/sesion")
-    SesionResponse actual(@AuthenticationPrincipal UsuarioAutenticado usuario) {
-        return SesionResponse.de(usuario);
+    ResponseEntity<SesionResponse> actual(@AuthenticationPrincipal UsuarioAutenticado usuario) {
+        if (usuario == null || usuario.tipo() != TipoDeCuenta.CLIENTE) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(SesionResponse.de(usuario));
     }
 
     @DeleteMapping("/sesion")

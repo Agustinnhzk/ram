@@ -37,8 +37,11 @@ class SeguridadConfig {
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/publico/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/sistema/sesion").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/tienda/sesion", "/api/tienda/registro").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/tienda/sesion", "/api/tienda/registro",
+                                "/api/tienda/recuperar-clave", "/api/tienda/restablecer-clave").permitAll()
                         .requestMatchers("/api/sistema/**").hasRole("PERSONAL")
+                        // La tienda pregunta "¿quién está logueado?" en cada página: sin sesión responde 204, no 401.
+                        .requestMatchers(HttpMethod.GET, "/api/tienda/sesion").permitAll()
                         .requestMatchers("/api/tienda/**").hasRole("CLIENTE")
                         // Lo que no está explícitamente permitido, está prohibido.
                         .anyRequest().denyAll())
@@ -49,6 +52,10 @@ class SeguridadConfig {
                 // además el token del cookie XSRF-TOKEN en el header X-XSRF-TOKEN. Otra web no puede
                 // leer esa cookie, así que no puede armar el header.
                 .csrf(csrf -> csrf
+                        // El seguimiento de reparaciones (ADR-009) y los formularios de "Trabajá con nosotros" (ADR-010)
+                        // no usan la sesión de nadie: CSRF protege acciones hechas "en nombre" de alguien logueado, y acá
+                        // no hay nadie. Pedir el token solo complicaría las páginas. Cada uno tiene su propio límite.
+                        .ignoringRequestMatchers("/api/publico/seguimiento", "/api/publico/contactos/**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
                 // Es una API: sin sesión responde 401, no redirige a una página de login.
@@ -57,7 +64,6 @@ class SeguridadConfig {
                 // con formulario. Una API no lo necesita, y eso creaba una sesión vacía por cada 401.
                 .requestCache(cache -> cache.requestCache(new NullRequestCache()))
                 .build();
-
     }
 
     @Bean

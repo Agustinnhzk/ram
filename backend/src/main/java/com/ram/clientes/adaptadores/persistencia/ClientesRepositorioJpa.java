@@ -9,8 +9,10 @@ import com.ram.clientes.dominio.Telefono;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 class ClientesRepositorioJpa implements ClientesRepositorio {
@@ -34,7 +36,9 @@ class ClientesRepositorioJpa implements ClientesRepositorio {
                 cliente.nombre().valor(),
                 cliente.nombre().paraBuscar(),
                 cliente.telefono().valor(),
-                cliente.correo().map(Correo::valor).orElse(null));
+                cliente.correo().map(Correo::valor).orElse(null),
+                cliente.notas().orElse(null),
+                cliente.cuentaTienda().orElse(null));
         jpa.save(entidad);
     }
 
@@ -44,10 +48,52 @@ class ClientesRepositorioJpa implements ClientesRepositorio {
     }
 
     @Override
+    public List<Cliente> buscarVarios(Collection<ClienteId> ids) {
+        return jpa.buscarVarios(ids.stream().map(ClienteId::valor).toList()).stream()
+                .map(ClientesRepositorioJpa::aDominio)
+                .toList();
+    }
+
+    @Override
     public List<Cliente> buscarPorNombre(String textoNormalizado, int limite) {
         return jpa.buscarPorNombre(textoNormalizado, PageRequest.of(0, limite)).stream()
                 .map(ClientesRepositorioJpa::aDominio)
                 .toList();
+    }
+
+    @Override
+    public List<Cliente> buscarPorTelefono(String digitos, int limite) {
+        return lista(jpa.buscarPorTelefono(digitos, PageRequest.of(0, limite)));
+    }
+
+    @Override
+    public List<Cliente> ultimos(int limite) {
+        return lista(jpa.ultimos(PageRequest.of(0, limite)));
+    }
+
+    @Override
+    public Optional<Cliente> porCuentaDeTienda(UUID cuenta) {
+        return jpa.porCuenta(cuenta).map(ClientesRepositorioJpa::aDominio);
+    }
+
+    @Override
+    public List<Cliente> sinCuentaConCorreo(String correo) {
+        return lista(jpa.sinCuentaConCorreo(correo));
+    }
+
+    @Override
+    public List<Cliente> sinCuentaConTelefono(String telefono) {
+        return lista(jpa.sinCuentaConTelefono(telefono));
+    }
+
+    @Override
+    public void borrar(ClienteId id) {
+        jpa.buscarPorId(id.valor()).ifPresent(jpa::delete);
+        jpa.flush();
+    }
+
+    private static List<Cliente> lista(List<ClienteJpaEntity> entidades) {
+        return entidades.stream().map(ClientesRepositorioJpa::aDominio).toList();
     }
 
     private static Cliente aDominio(ClienteJpaEntity e) {
@@ -55,6 +101,9 @@ class ClientesRepositorioJpa implements ClientesRepositorio {
                 ClienteId.de(e.getId()),
                 new NombreCompleto(e.getNombreCompleto()),
                 new Telefono(e.getTelefono()),
-                Correo.opcional(e.getCorreo()));
+                Correo.opcional(e.getCorreo()),
+                e.getNotas(),
+                e.getCuentaTiendaId(),
+                e.getCreadoEn());
     }
 }

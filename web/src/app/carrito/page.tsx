@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
-import { EnConstruccion } from "@/components/EnConstruccion";
+import { Carrito } from "@/components/Carrito";
+import { obtenerTaller } from "@/lib/api";
 
-export const metadata: Metadata = { title: "Tu carrito" };
+export const metadata: Metadata = { title: "Carrito", robots: { index: false } };
 
-export default function Pagina() {
+/** /carrito: la página la arma el servidor; la lista la completa el navegador (ver components/Carrito). */
+export default async function Pagina() {
+  const taller = await obtenerTaller();
+
   return (
-    <EnConstruccion
-      titulo="Tu carrito"
-      descripcion="Acá vas a ver los productos que elegiste para comprar."
-    />
+    <main className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+      <h1 className="texto-metalico text-5xl sm:text-6xl">Tu carrito</h1>
+      <Carrito whatsapp={taller.whatsapp} />
+    </main>
   );
 }

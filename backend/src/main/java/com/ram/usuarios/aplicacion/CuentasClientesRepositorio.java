@@ -16,4 +16,7 @@ public interface CuentasClientesRepositorio {
     Optional<CuentaCliente> buscarPorCorreo(CorreoDeAcceso correo);
 
     boolean existeCorreo(CorreoDeAcceso correo);
+
+    /** Borra la cuenta y sus pedidos de recuperación de clave. Si tiene pedidos, la base no lo deja (FOREIGN KEY). */
+    void borrar(UsuarioId id);
 }

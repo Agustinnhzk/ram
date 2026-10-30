@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { obtenerTaller } from "@/lib/api";
 import { linkWhatsApp } from "@/lib/whatsapp";
-import { IconoInstagram, IconoWhatsApp } from "./Iconos";
+import { IconoCorreo, IconoInstagram, IconoWhatsApp } from "./Iconos";
 
 export async function PiePagina() {
   // Componente cacheado: así puede usar la fecha actual (el año del copyright) sin que Next.js
@@ -41,6 +41,14 @@ export async function PiePagina() {
                 {taller.whatsappVisible}
               </a>
             </li>
+            {taller.correo && (
+              <li>
+                <a href={`mailto:${taller.correo}`} className="inline-flex items-center gap-2 break-all hover:text-oro-claro">
+                  <IconoCorreo className="size-5 shrink-0 text-oro" />
+                  {taller.correo}
+                </a>
+              </li>
+            )}
           </ul>
         </div>
 
@@ -50,6 +58,11 @@ export async function PiePagina() {
             <li>
               <Link href="/quienes-somos" className="hover:text-oro-claro">
                 Sobre nosotros
+              </Link>
+            </li>
+            <li>
+              <Link href="/seguimiento" className="hover:text-oro-claro">
+                Seguí tu reparación
               </Link>
             </li>
             <li>

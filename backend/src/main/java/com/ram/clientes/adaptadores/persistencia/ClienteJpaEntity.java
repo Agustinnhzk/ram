@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.TenantId;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -39,6 +40,16 @@ class ClienteJpaEntity {
     @Column(length = 254)
     private String correo;
 
+    @Column(length = 2000)
+    private String notas;
+
+    @Column(name = "cuenta_tienda_id")
+    private UUID cuentaTiendaId;
+
+    /** La pone la base (DEFAULT now()): Hibernate no la escribe nunca, solo la lee. */
+    @Column(name = "creado_en", insertable = false, updatable = false)
+    private Instant creadoEn;
+
     protected ClienteJpaEntity() {
         // requerido por JPA
     }
@@ -47,11 +58,14 @@ class ClienteJpaEntity {
         this.id = id;
     }
 
-    void actualizar(String nombreCompleto, String nombreBusqueda, String telefono, String correo) {
+    void actualizar(String nombreCompleto, String nombreBusqueda, String telefono, String correo, String notas,
+                    UUID cuentaTiendaId) {
         this.nombreCompleto = nombreCompleto;
         this.nombreBusqueda = nombreBusqueda;
         this.telefono = telefono;
         this.correo = correo;
+        this.notas = notas;
+        this.cuentaTiendaId = cuentaTiendaId;
     }
 
     UUID getId() {
@@ -68,5 +82,17 @@ class ClienteJpaEntity {
 
     String getCorreo() {
         return correo;
+    }
+
+    String getNotas() {
+        return notas;
+    }
+
+    UUID getCuentaTiendaId() {
+        return cuentaTiendaId;
+    }
+
+    Instant getCreadoEn() {
+        return creadoEn;
     }
 }

@@ -10,12 +10,33 @@ spring:
     properties:
       # Filtro automático por taller en toda entidad con @TenantId (ADR-005).
       hibernate.tenant_identifier_resolver: com.ram.tenants.adaptadores.persistencia.ResolvedorTallerHibernate
+  flyway:
+    # Solo las migraciones de verdad. Los datos de ejemplo (db/ejemplos) se suman con el perfil "dev", abajo.
+    locations: classpath:db/migration
+    # "*:future" es lo que Flyway ignora por defecto. "repeatable:missing": si en tu base ya corrieron
+    # los datos de ejemplo y arrancás sin el perfil dev, que no lo tome como un error.
+    ignore-migration-patterns: "*:future,repeatable:missing"
+  servlet:
+    multipart:
+      # El tope de cualquier archivo: 10 MB (las fotos de productos, ADR-013). CVs y comprobantes tienen su propio
+      # límite de 5 MB en el código (ADR-010 y ADR-011). Lo que pasa de esto se corta antes de leerlo entero.
+      max-file-size: 10MB
+      max-request-size: 11MB
+  # El servidor de correo (usuario y clave) NO va acá: va en backend/config/application.yml, que no está en git.
+  # Sin spring.mail.host, los mails se escriben en el log en vez de mandarse (útil en tests y sin internet).
   session:
     jdbc:
       # Las tablas de sesiones las crea Flyway (V5), no Spring Session.
       initialize-schema: never
 
 server:
+  # Spring está detrás de un proxy: en desarrollo, el de Next (la tienda) y el de Vite (el sistema);
+  # en producción, el servidor web. "native" = Tomcat cree en X-Forwarded-Host / -For / -Proto SOLO si
+  # el pedido viene de un proxy de confianza (localhost o red interna). Con eso:
+  #   - getServerName() es el dominio que escribió el cliente → se resuelve bien el taller (ADR-002);
+  #   - getRemoteAddr() es la IP real del cliente → funciona el límite de intentos del seguimiento (ADR-009).
+  # Alguien desde internet no puede falsificar esos encabezados: no es un proxy de confianza.
+  forward-headers-strategy: native
   servlet:
     session:
       # Se cierra tras 4 horas SIN ACTIVIDAD (no 4 horas desde el login).
@@ -27,3 +48,19 @@ ram:
     # Los navegadores y curl resuelven *.localhost a tu propia máquina, sin tocar nada.
     dominio-base: localhost
   # El dueño inicial NO va acá (este archivo está en git): va en backend/config/application.yml.
+  correo:
+    # A dónde llegan postulaciones, consultas de empresas y avisos de pedidos.
+    # Para pruebas, tu mail; cuando tengas el del negocio, lo cambiás acá (o lo pisás en config/application.yml).
+    destino-del-taller: agustinnegri6@gmail.com
+    # El "De:" de los mails (ram.correo.remitente): si no se pone, es la cuenta de spring.mail.username,
+    # que es lo que exige Gmail.
+
+---
+# Perfil "dev": tu máquina. Se activa con spring.profiles.active: dev en backend/config/application.yml.
+# Suma los datos de ejemplo (catálogo con precios inventados). Nunca se activa en producción ni en los tests.
+spring:
+  config:
+    activate:
+      on-profile: dev
+  flyway:
+    locations: classpath:db/migration,classpath:db/ejemplos

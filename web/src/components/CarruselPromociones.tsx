@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
 import type { Promocion } from "@/lib/api";
+import { esImagenDeLaApi } from "@/lib/imagenes";
 
 /**
  * Carrusel de flyers. "use client" porque las flechas necesitan JavaScript en el navegador.
@@ -36,6 +37,7 @@ export function CarruselPromociones({ promociones }: { promociones: Promocion[] 
                 alt={p.textoAlternativo}
                 width={1080}
                 height={1080}
+                unoptimized={esImagenDeLaApi(p.imagen)}
                 sizes="(min-width: 1024px) 31vw, (min-width: 640px) 44vw, 78vw"
                 className="aspect-square h-auto w-full object-cover"
               />

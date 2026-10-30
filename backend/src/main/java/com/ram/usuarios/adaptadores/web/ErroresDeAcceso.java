@@ -2,6 +2,7 @@ package com.ram.usuarios.adaptadores.web;
 
 import com.ram.usuarios.aplicacion.CorreoYaRegistradoException;
 import com.ram.usuarios.aplicacion.CredencialesInvalidasException;
+import com.ram.usuarios.aplicacion.EnlaceDeRecuperacionInvalidoException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,17 @@ class ErroresDeAcceso {
     @ExceptionHandler({CorreoYaRegistradoException.class, DataIntegrityViolationException.class})
     ResponseEntity<Map<String, String>> correoYaRegistrado() {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "correo_ya_registrado"));
+    }
+
+    @ExceptionHandler(DemasiadosIntentosException.class)
+    ResponseEntity<Map<String, String>> demasiadosIntentos(DemasiadosIntentosException e) {
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(Map.of("error", "demasiados_intentos", "detalle", e.getMessage()));
+    }
+
+    @ExceptionHandler(EnlaceDeRecuperacionInvalidoException.class)
+    ResponseEntity<Map<String, String>> enlaceInvalido(EnlaceDeRecuperacionInvalidoException e) {
+        return ResponseEntity.badRequest().body(Map.of("error", "enlace_invalido", "detalle", e.getMessage()));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

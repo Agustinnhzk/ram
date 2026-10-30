@@ -1,8 +1,11 @@
+import Form from "next/form";
 import Image from "next/image";
 import Link from "next/link";
 import { obtenerTaller } from "@/lib/api";
 import { BotonTema } from "./BotonTema";
-import { IconoCarrito, IconoLupa } from "./Iconos";
+import { CarritoEnEncabezado } from "./CarritoEnEncabezado";
+import { CuentaEnEncabezado } from "./CuentaEnEncabezado";
+import { IconoLupa } from "./Iconos";
 
 const secciones = [
   { href: "/productos", texto: "Productos" },
@@ -31,8 +34,8 @@ export async function Encabezado() {
           </span>
         </Link>
 
-        {/* Un formulario común: funciona aun sin JavaScript y lleva a /productos?q=... */}
-        <form action="/productos" role="search" className="order-last w-full sm:order-none sm:w-auto sm:flex-1">
+        {/* <Form> de Next: funciona aun sin JavaScript y, con JavaScript, lleva a /productos?q=... sin recargar todo. */}
+        <Form action="/productos" role="search" className="order-last w-full sm:order-none sm:w-auto sm:flex-1">
           <label htmlFor="buscador" className="sr-only">
             Buscar productos
           </label>
@@ -48,26 +51,12 @@ export async function Encabezado() {
               <IconoLupa className="size-5" />
             </button>
           </div>
-        </form>
+        </Form>
 
         <nav aria-label="Cuenta" className="ml-auto flex items-center gap-3 text-sm sm:ml-0 sm:gap-4">
           <BotonTema />
-          <Link href="/ingresar" className="text-principal hover:text-oro-claro">
-            Ingresá
-          </Link>
-          {/* En el celular no entra: el registro se ofrece desde "Ingresá". */}
-          <Link
-            href="/registro"
-            className="hidden rounded-full border border-oro px-3.5 py-1.5 text-oro hover:bg-oro hover:text-fondo sm:inline-block"
-          >
-            Registrate
-          </Link>
-          <Link href="/carrito" className="relative text-principal hover:text-oro-claro" aria-label="Carrito, 0 productos">
-            <IconoCarrito className="size-6" />
-            <span className="absolute -top-1.5 -right-2 grid size-4.5 place-items-center rounded-full bg-oro text-[0.65rem] font-semibold text-fondo">
-              0
-            </span>
-          </Link>
+          <CuentaEnEncabezado />
+          <CarritoEnEncabezado />
         </nav>
       </div>
 

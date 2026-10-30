@@ -1,0 +1,148 @@
+@import "tailwindcss";
+
+/*
+ * La misma identidad que la tienda (copiada de web/src/app/globals.css, ver ADR-007).
+ * Colores por FUNCIÓN, no por tono: el mismo nombre sirve en modo oscuro y en modo claro.
+ */
+:root {
+  color-scheme: dark;
+  --fondo: #000000;
+  --superficie: #15110a;
+  --superficie-alta: #1f1910;
+  --borde: #3a2d16;
+  --principal: #ececec;
+  --suave: #b8ae9c;
+  --oro: #e3b04b;
+  --oro-claro: #f7d684;
+  --oro-profundo: #9a6a1c;
+  --peligro: #f87171;
+  --exito: #4ade80;
+  --info: #7dd3fc;
+  --aviso: #fcd34d;
+  --metal: linear-gradient(180deg, #ffffff 0%, #d9d9d9 42%, #f7d684 58%, #e3b04b 78%, #9a6a1c 100%);
+}
+
+[data-tema="claro"] {
+  color-scheme: light;
+  --fondo: #ffffff;
+  --superficie: #f4f2ef;
+  --superficie-alta: #ebe7e0;
+  --borde: #e2d6bd;
+  --principal: #2e2e2e;
+  --suave: #6b6255;
+  --oro: #9a6a1c;
+  --oro-claro: #7d5410;
+  --oro-profundo: #6b470c;
+  --peligro: #b91c1c;
+  --exito: #15803d;
+  --info: #0369a1;
+  --aviso: #b45309;
+  --metal: linear-gradient(180deg, #4a4a4a 0%, #2e2e2e 42%, #b98a2c 58%, #9a6a1c 78%, #6b470c 100%);
+}
+
+@theme inline {
+  --color-fondo: var(--fondo);
+  --color-superficie: var(--superficie);
+  --color-superficie-alta: var(--superficie-alta);
+  --color-borde: var(--borde);
+  --color-principal: var(--principal);
+  --color-suave: var(--suave);
+  --color-oro: var(--oro);
+  --color-oro-claro: var(--oro-claro);
+  --color-oro-profundo: var(--oro-profundo);
+  --color-peligro: var(--peligro);
+  --color-exito: var(--exito);
+  --color-info: var(--info);
+  --color-aviso: var(--aviso);
+}
+
+@theme {
+  --color-negro: #000000;
+  --font-display: "Exo 2 Variable", "Arial Narrow", sans-serif;
+  --font-sans: "Barlow", system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    background: var(--fondo);
+    color: var(--principal);
+    font-family: var(--font-sans);
+  }
+
+  body {
+    line-height: 1.5;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--oro-claro);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Los números de plata alineados: cada dígito ocupa lo mismo, así las columnas de precios se leen fácil. */
+  .numeros {
+    font-variant-numeric: tabular-nums;
+  }
+
+  dialog::backdrop {
+    background: rgb(0 0 0 / 0.6);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}
+
+@layer components {
+  .texto-metalico {
+    background: var(--metal);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .boton-oro {
+    background: linear-gradient(180deg, #f7d684, #e3b04b 55%, #9a6a1c);
+    color: #000000;
+  }
+
+  .icono-sol {
+    display: block;
+  }
+  .icono-luna {
+    display: none;
+  }
+  [data-tema="claro"] .icono-sol {
+    display: none;
+  }
+  [data-tema="claro"] .icono-luna {
+    display: block;
+  }
+}
+
+/* Al imprimir (el comprobante): papel blanco, sin botones, márgenes de hoja. */
+@media print {
+  html {
+    background: #ffffff;
+  }
+  .no-imprimir {
+    display: none !important;
+  }
+  @page {
+    margin: 12mm;
+  }
+}

@@ -8,8 +8,8 @@ import java.util.Objects;
  * La cuenta de un cliente en la tienda del taller.
  *
  * <p>No es lo mismo que la ficha del cliente (módulo clientes): la ficha la carga el taller
- * en el mostrador; la cuenta la crea el cliente para comprar. Cuando el correo esté verificado
- * se van a vincular, y en "Mi cuenta" el cliente verá también sus reparaciones.
+ * en el mostrador; la cuenta la crea el cliente para comprar. Con el primer pedido se vinculan (ADR-014),
+ * y en "Mis pedidos" el cliente ve también sus reparaciones.
  */
 public class CuentaCliente {
 

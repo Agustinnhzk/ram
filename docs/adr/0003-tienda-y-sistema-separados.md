@@ -1,6 +1,6 @@
 # ADR-003: Tienda y sistema de gestión como aplicaciones separadas
 
-- **Estado:** Aceptada
+- **Estado:** Aceptada (la elección de Next.js para el sistema fue reemplazada por el [ADR-007](0007-sistema-de-gestion-con-react-y-vite.md))
 - **Fecha:** 2026-10-27
 
 ## Contexto
@@ -21,7 +21,8 @@ Dos aplicaciones frontend separadas, cada una en su subdominio, con un único ba
 | Tienda (web pública) | `ramservicios.com.ar` | Cualquiera | Solo para comprar (cliente) |
 | Sistema de gestión | `sistema.ramservicios.com.ar` | Personal del taller | Siempre (personal) |
 
-Las dos usan el mismo stack (Next.js), y los componentes en común viven en una carpeta compartida del repositorio.
+~~Las dos usan el mismo stack (Next.js), y los componentes en común viven en una carpeta compartida del repositorio.~~
+Ver ADR-007: la tienda usa Next.js y el sistema, React + Vite.
 
 El backend separa sus rutas por canal:
 

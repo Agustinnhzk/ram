@@ -12,9 +12,11 @@ import java.util.Optional;
 class CuentasClientesRepositorioJpa implements CuentasClientesRepositorio {
 
     private final CuentaClienteJpaRepository jpa;
+    private final RecuperacionJpaRepository recuperaciones;
 
-    CuentasClientesRepositorioJpa(CuentaClienteJpaRepository jpa) {
+    CuentasClientesRepositorioJpa(CuentaClienteJpaRepository jpa, RecuperacionJpaRepository recuperaciones) {
         this.jpa = jpa;
+        this.recuperaciones = recuperaciones;
     }
 
     @Override
@@ -38,6 +40,14 @@ class CuentasClientesRepositorioJpa implements CuentasClientesRepositorio {
     @Override
     public boolean existeCorreo(CorreoDeAcceso correo) {
         return jpa.existsByCorreo(correo.valor());
+    }
+
+    /** flush(): si la base rechaza el borrado (tiene pedidos), que salte acá y no al final de la transacción. */
+    @Override
+    public void borrar(UsuarioId id) {
+        recuperaciones.deleteAll(recuperaciones.todasDe(id.valor()));
+        jpa.buscarPorId(id.valor()).ifPresent(jpa::delete);
+        jpa.flush();
     }
 
     private static CuentaCliente aDominio(CuentaClienteJpaEntity e) {

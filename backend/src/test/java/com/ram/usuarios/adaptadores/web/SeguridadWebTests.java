@@ -63,6 +63,11 @@ class SeguridadWebTests {
     }
 
     @Test
+    void laTiendaPreguntaQuienEstaLogueadoSinRecibirUnError() throws Exception {
+        mvc.perform(get(RAM + "/api/tienda/sesion")).andExpect(status().isNoContent());
+    }
+
+    @Test
     void sinSesionElSistemaNoResponde() throws Exception {
         mvc.perform(get(RAM + "/api/sistema/clientes").param("nombre", "ana"))
                 .andExpect(status().isUnauthorized());

@@ -9,8 +9,12 @@ import { BotonWhatsApp } from "@/components/BotonWhatsApp";
 import { Encabezado } from "@/components/Encabezado";
 import { PiePagina } from "@/components/PiePagina";
 import { ScriptEnLinea } from "@/components/ScriptEnLinea";
+import { URL_DEL_SITIO } from "@/lib/sitio";
 
 export const metadata: Metadata = {
+  // Para armar links completos a las imágenes que se ven al compartir
+  // (WhatsApp necesita https://.../foto.jpg, no /foto.jpg).
+  metadataBase: new URL(URL_DEL_SITIO),
   title: {
     default: "R.A.M. Seguridad y Tecnología | Rosario",
     template: "%s | R.A.M. Seguridad y Tecnología",

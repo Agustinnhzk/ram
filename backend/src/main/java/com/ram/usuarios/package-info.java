@@ -9,7 +9,8 @@
  *
  * <p>API pública para otros módulos: {@link com.ram.usuarios.SesionActual} (quién está logueado),
  * {@link com.ram.usuarios.UsuarioAutenticado}, {@link com.ram.usuarios.UsuarioId},
- * {@link com.ram.usuarios.Rol} y {@link com.ram.usuarios.TipoDeCuenta}.
+ * {@link com.ram.usuarios.Rol}, {@link com.ram.usuarios.TipoDeCuenta} y {@link com.ram.usuarios.CuentasDeTienda}
+ * (consultar cuentas de la tienda, para vincularlas con la ficha del cliente).
  */
 @org.springframework.modulith.ApplicationModule(displayName = "Usuarios")
 package com.ram.usuarios;

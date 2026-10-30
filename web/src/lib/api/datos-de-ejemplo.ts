@@ -1,8 +1,9 @@
-import type { Producto, Promocion, Taller } from "./tipos";
+import type { GrupoDeServicios, ModeloDePc, QuienesSomos, Taller } from "./tipos";
 
 /**
- * Datos de ejemplo mientras no existen los módulos de catálogo y contenido en el backend.
- * Tienen la misma forma que va a devolver la API (ver tipos.ts).
+ * Lo que todavía no está en el backend: datos del taller, servicios, quiénes somos y modelos de Armá tu PC.
+ * El catálogo, los componentes y los banners ya vienen de la API (ver index.ts).
+ * Tienen la misma forma que va a devolver la API cuando exista (ver tipos.ts).
  * Solo los usa ./index.ts: ninguna pantalla importa este archivo directamente.
  */
 
@@ -14,156 +15,172 @@ export const taller: Taller = {
   whatsapp: "5493417847613",
   whatsappVisible: "341 784-7613",
   instagram: "r.a.mantenimiento",
+  // El mail del negocio (el del hosting, por ejemplo reparaciones@tudominio.com.ar). Con null no se muestra.
+  // Cambiándolo acá aparece en el pie de todas las páginas, en Quiénes somos y en Servicios.
+  correo: null,
+  // Se pisa con el del backend (GET /api/publico/armado-de-pc): se edita desde el sistema.
+  precioArmado: null,
 };
 
-export const promociones: Promocion[] = [
+
+
+
+export const gruposDeServicios: GrupoDeServicios[] = [
   {
-    id: "p1",
-    imagen: "/promos/camaras-y-alarmas.jpg",
-    textoAlternativo: "Cámaras y alarmas con stock inmediato, de exterior e interior, inalámbricas y cableadas",
-    enlace: "/productos?categoria=camaras",
+    slug: "instalaciones",
+    titulo: "Cámaras, alarmas y monitoreo",
+    descripcion: "Instalamos sistemas de seguridad en casas y negocios, y te los dejamos funcionando en el celular.",
+    ventajas: ["Hogar y empresa", "Interior y exterior", "Inalámbricas y cableadas"],
+    destacado: true,
+    servicios: [
+      {
+        slug: "instalacion-de-camaras",
+        nombre: "Instalación de cámaras de seguridad",
+        resumen: "Cámaras con grabación para ver tu casa o tu negocio desde donde estés.",
+        incluye: ["Kits con DVR", "Visión nocturna", "Configuración en tu celular"],
+        icono: "camara",
+        enlace: { href: "/productos?categoria=camaras", texto: "Ver kits de cámaras" },
+      },
+      {
+        slug: "instalacion-de-alarmas",
+        nombre: "Instalación de alarmas",
+        resumen: "Alarmas DSC, X28 y Garnet, con sensores, sirena y aviso inmediato.",
+        incluye: ["Sensores y sirena", "Control desde el celular", "Sin obra en las inalámbricas"],
+        icono: "alarma",
+        enlace: { href: "/productos?categoria=alarmas", texto: "Ver kits de alarmas" },
+      },
+      {
+        slug: "monitoreo",
+        nombre: "Monitoreo",
+        resumen: "Un abono mensual para que tu sistema de seguridad esté vigilado en tiempo real.",
+        incluye: ["Abono mensual", "Débito automático o transferencia", "Monitoreo en tiempo real"],
+        icono: "monitoreo",
+      },
+    ],
   },
   {
-    id: "p2",
-    imagen: "/promos/reparacion.jpg",
-    textoAlternativo: "Reparación de notebooks y PC a domicilio, con retiro y entrega, y sin costo si no se logra reparar",
-    enlace: "/servicios#reparacion",
+    slug: "reparacion",
+    titulo: "Servicio técnico",
+    descripcion: "Reparamos notebooks y PC en el local o a domicilio, y armamos equipos a medida.",
+    ventajas: ["A domicilio o en el local", "Retiro y entrega", "Sin costo si no se logra reparar"],
+    destacado: true,
+    servicios: [
+      {
+        slug: "reparacion-de-notebooks",
+        nombre: "Reparación de notebooks",
+        resumen: "Cambio de repuestos, reparación de bisagras y fallas de encendido.",
+        incluye: ["Cambio de repuestos", "Bisagras", "Fallas de encendido"],
+        icono: "notebook",
+      },
+      {
+        slug: "reparacion-de-pc",
+        nombre: "Reparación de PC",
+        resumen: "Diagnóstico y reparación de tu PC de escritorio.",
+        incluye: ["Diagnóstico", "Cambio de componentes"],
+        icono: "pc",
+      },
+      {
+        slug: "armado-de-pc",
+        nombre: "Armado de PC",
+        resumen: "PC a medida para jugar, trabajar o estudiar, armada, probada y lista para usar.",
+        incluye: ["Componentes a elección", "Sistema instalado", "Garantía"],
+        icono: "armado",
+        enlace: { href: "/arma-tu-pc", texto: "Armá tu PC" },
+      },
+    ],
   },
   {
-    id: "p3",
-    imagen: "/promos/armado-de-pc.jpg",
-    textoAlternativo: "Armado de PC a medida para gaming, trabajo o estudio, lista para usar",
-    enlace: "/arma-tu-pc",
+    slug: "venta",
+    titulo: "Venta de equipos e insumos",
+    descripcion: "Todo lo que instalamos y reparamos, también lo vendemos.",
+    ventajas: ["Garantía incluida", "Asesoramiento para elegir"],
+    destacado: true,
+    servicios: [
+      {
+        slug: "venta-de-insumos",
+        nombre: "Alarmas, cámaras, notebooks y PC",
+        resumen: "Kits de seguridad, notebooks nuevas y reacondicionadas, y PC armadas.",
+        incluye: ["Notebooks nuevas: 12 meses de garantía", "Reacondicionadas: 3 meses de garantía"],
+        icono: "venta",
+        enlace: { href: "/productos", texto: "Ver productos" },
+      },
+    ],
   },
   {
-    id: "p4",
-    imagen: "/promos/alarmas-inalambricas.jpg",
-    textoAlternativo: "Alarmas inalámbricas X28 y DSC: protección sin cables",
-    enlace: "/productos?categoria=alarmas",
-  },
-  {
-    id: "p5",
-    imagen: "/promos/kit-4-camaras.jpg",
-    textoAlternativo: "Kit de 4 cámaras Full HD con visión nocturna y acceso desde el celular",
-    enlace: "/productos?categoria=camaras",
-  },
-  {
-    id: "p6",
-    imagen: "/promos/seguridad-inteligente.jpg",
-    textoAlternativo: "Seguridad inteligente para hogar, empresa y tus datos, con monitoreo en tiempo real",
-    enlace: "/servicios#instalaciones",
+    slug: "software",
+    titulo: "Desarrollo de software",
+    descripcion: "También desarrollamos software a medida. Si tenés una idea, contanos.",
+    ventajas: [],
+    destacado: false,
+    servicios: [],
   },
 ];
 
-export const productos: Producto[] = [
+export const quienesSomos: QuienesSomos = {
+  presentacion: "Somos una empresa integral de servicios de IT con más de 3 años de experiencia en el rubro.",
+  significadoDelNombre: "Reparación, Asesoramiento y Mantenimiento",
+  datos: [
+    { valor: "+3", texto: "años de experiencia" },
+    { valor: "8", texto: "servicios en un solo lugar" },
+    { valor: "A domicilio", texto: "o en el local" },
+  ],
+  valores: [
+    {
+      titulo: "Integral",
+      texto: "Reparamos, instalamos, monitoreamos y vendemos: no tenés que buscar a un técnico para cada cosa.",
+    },
+    {
+      titulo: "Cerca tuyo",
+      texto: "Vamos a tu casa o a tu negocio, retiramos y entregamos los equipos.",
+    },
+    {
+      titulo: "Con garantía",
+      texto: "Lo que vendemos tiene garantía, y si una reparación no se logra, no la cobramos.",
+    },
+  ],
+};
+
+
+export const modelosDePc: ModeloDePc[] = [
   {
-    id: "1",
-    slug: "kit-2-camaras-dvr",
-    nombre: "Kit 2 cámaras + DVR",
-    categoria: "camaras",
-    condicion: "nuevo",
-    precio: null,
-    imagen: "/productos/kit-2-camaras-dvr.jpg",
-    resumen: "Full HD, visión nocturna y acceso desde el celular.",
-    garantiaMeses: null,
+    slug: "oficina",
+    nombre: "Oficina y estudio",
+    descripcion: "Para trabajar, estudiar y navegar sin trabas. Sin placa de video: usa los gráficos del procesador.",
+    componentes: {
+      cpu: "core-i3-12100",
+      mother: "h610m",
+      ram: "ddr4-8gb",
+      almacenamiento: "ssd-nvme-500gb",
+      fuente: "fuente-500w",
+      gabinete: "gabinete-matx",
+    },
   },
   {
-    id: "2",
-    slug: "kit-4-camaras-dvr",
-    nombre: "Kit 4 cámaras + DVR",
-    categoria: "camaras",
-    condicion: "nuevo",
-    precio: null,
-    imagen: "/productos/kit-4-camaras-dvr.jpg",
-    resumen: "Para cubrir casa o negocio completo, de día y de noche.",
-    garantiaMeses: null,
+    slug: "gamer-inicial",
+    nombre: "Gamer inicial",
+    descripcion: "Para jugar en 1080p los juegos más populares.",
+    componentes: {
+      cpu: "ryzen-5-5600",
+      mother: "a520m",
+      ram: "ddr4-16gb",
+      gpu: "rtx-3050",
+      almacenamiento: "ssd-nvme-1tb",
+      fuente: "fuente-500w",
+      gabinete: "gabinete-matx",
+    },
   },
   {
-    id: "3",
-    slug: "kit-alarma-dsc",
-    nombre: "Kit alarma DSC",
-    categoria: "alarmas",
-    condicion: "nuevo",
-    precio: null,
-    imagen: "/productos/kit-alarma-dsc.jpg",
-    resumen: "Sensores, sirena y control desde el celular.",
-    garantiaMeses: null,
-  },
-  {
-    id: "4",
-    slug: "kit-alarma-x28",
-    nombre: "Kit alarma X28",
-    categoria: "alarmas",
-    condicion: "nuevo",
-    precio: null,
-    imagen: "/productos/kit-alarma-x28.jpg",
-    resumen: "Instalación rápida, sin cables y con aviso inmediato.",
-    garantiaMeses: null,
-  },
-  {
-    id: "5",
-    slug: "kit-alarma-garnet",
-    nombre: "Kit alarma inalámbrica Garnet",
-    categoria: "alarmas",
-    condicion: "nuevo",
-    precio: null,
-    imagen: "/productos/kit-alarma-garnet.jpg",
-    resumen: "100% inalámbrica, con controles remotos y sirena.",
-    garantiaMeses: null,
-  },
-  {
-    id: "6",
-    slug: "sistema-integral-sc",
-    nombre: "Alarma y cámaras integradas",
-    categoria: "alarmas",
-    condicion: "nuevo",
-    precio: null,
-    imagen: "/productos/sistema-integral-sc.jpg",
-    resumen: "Alarma DSC y cámaras Hikvision en un solo sistema.",
-    garantiaMeses: null,
-  },
-  {
-    id: "7",
-    slug: "notebook-gamer",
-    nombre: "Notebook gamer",
-    categoria: "notebooks",
-    condicion: "nuevo",
-    precio: null,
-    imagen: "/productos/notebook-gamer.jpg",
-    resumen: "Para jugar y para diseño avanzado.",
-    garantiaMeses: 12,
-  },
-  {
-    id: "8",
-    slug: "notebook-nueva",
-    nombre: "Notebook para trabajo",
-    categoria: "notebooks",
-    condicion: "nuevo",
-    precio: null,
-    imagen: "/productos/notebook-nueva.jpg",
-    resumen: "Rendimiento para software profesional y multitarea.",
-    garantiaMeses: 12,
-  },
-  {
-    id: "9",
-    slug: "notebook-reacondicionada",
-    nombre: "Notebook reacondicionada",
-    categoria: "notebooks",
-    condicion: "reacondicionado",
-    precio: null,
-    imagen: "/productos/notebook-reacondicionada.jpg",
-    resumen: "Ideal para estudiar, revisada y lista para usar.",
-    garantiaMeses: 3,
-  },
-  {
-    id: "10",
-    slug: "pc-gamer",
-    nombre: "PC gamer",
-    categoria: "pc",
-    condicion: "nuevo",
-    precio: null,
-    imagen: "/productos/pc-gamer.jpg",
-    resumen: "Armada, probada y con el sistema instalado.",
-    garantiaMeses: 12,
+    slug: "gamer-avanzada",
+    nombre: "Gamer avanzada",
+    descripcion: "Para jugar en 1440p con todo al máximo, y para streaming o edición.",
+    componentes: {
+      cpu: "ryzen-7-7800x3d",
+      mother: "b650",
+      ram: "ddr5-32gb",
+      gpu: "rtx-4070-super",
+      almacenamiento: "ssd-nvme-1tb",
+      fuente: "fuente-750w",
+      gabinete: "gabinete-atx-flujo",
+    },
   },
 ];

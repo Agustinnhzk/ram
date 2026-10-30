@@ -30,15 +30,18 @@ class SesionPersonalController {
 
     private final ServicioDeAcceso acceso;
     private final SesionWeb sesionWeb;
+    private final LimitadorDeIngresos limitador;
 
-    SesionPersonalController(ServicioDeAcceso acceso, SesionWeb sesionWeb) {
+    SesionPersonalController(ServicioDeAcceso acceso, SesionWeb sesionWeb, LimitadorDeIngresos limitador) {
         this.acceso = acceso;
         this.sesionWeb = sesionWeb;
+        this.limitador = limitador;
     }
 
     @PostMapping
     SesionResponse iniciar(@RequestBody Credenciales credenciales, HttpServletRequest request, HttpServletResponse response) {
-        var resultado = acceso.iniciarSesionPersonal(credenciales.correo(), credenciales.clave());
+        var resultado = limitador.proteger(request.getRemoteAddr(), credenciales.correo(),
+                () -> acceso.iniciarSesionPersonal(credenciales.correo(), credenciales.clave()));
         return SesionResponse.de(sesionWeb.iniciar(resultado, request, response));
     }
 

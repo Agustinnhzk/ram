@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
-import { EnConstruccion } from "@/components/EnConstruccion";
+import { Suspense } from "react";
+import { FormularioRegistro } from "@/components/cuenta/FormularioRegistro";
+import { TarjetaDeCuenta } from "@/components/cuenta/TarjetaDeCuenta";
 
-export const metadata: Metadata = { title: "Registrate" };
+export const metadata: Metadata = { title: "Registrate", robots: { index: false } };
 
 export default function Pagina() {
   return (
-    <EnConstruccion
-      titulo="Registrate"
-      descripcion="Acá vas a poder crear tu cuenta para comprar y seguir tus reparaciones."
-    />
+    <TarjetaDeCuenta titulo="Creá tu cuenta" bajada="Con tu cuenta comprás, pagás por transferencia y seguís tus pedidos.">
+      <Suspense>
+        <FormularioRegistro />
+      </Suspense>
+    </TarjetaDeCuenta>
   );
 }

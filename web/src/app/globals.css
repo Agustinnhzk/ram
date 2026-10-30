@@ -19,6 +19,9 @@
   --oro: #e3b04b;
   --oro-claro: #f7d684;
   --oro-profundo: #9a6a1c;
+  /* Estados del stock: "hay" y "sin stock, se reserva" (ADR-014). */
+  --exito: #5fd38d;
+  --aviso: #f2a04b;
   /* El metal de los títulos: de plata a oro. */
   --metal: linear-gradient(180deg, #ffffff 0%, #d9d9d9 42%, #f7d684 58%, #e3b04b 78%, #9a6a1c 100%);
 }
@@ -34,6 +37,8 @@
   --oro: #9a6a1c;
   --oro-claro: #7d5410;
   --oro-profundo: #6b470c;
+  --exito: #1f7a46;
+  --aviso: #a8530a;
   /* Sobre blanco, la plata desaparece: el metal va de grafito a oro. */
   --metal: linear-gradient(180deg, #4a4a4a 0%, #2e2e2e 42%, #b98a2c 58%, #9a6a1c 78%, #6b470c 100%);
 }
@@ -48,6 +53,8 @@
   --color-oro: var(--oro);
   --color-oro-claro: var(--oro-claro);
   --color-oro-profundo: var(--oro-profundo);
+  --color-exito: var(--exito);
+  --color-aviso: var(--aviso);
 }
 
 /* Colores que no cambian con el tema. */

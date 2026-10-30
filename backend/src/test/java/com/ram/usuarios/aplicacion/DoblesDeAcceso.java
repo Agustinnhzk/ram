@@ -79,5 +79,29 @@ final class DoblesDeAcceso {
         public boolean existeCorreo(CorreoDeAcceso correo) {
             return buscarPorCorreo(correo).isPresent();
         }
+
+        @Override
+        public void borrar(UsuarioId id) {
+            datos.remove(id);
+        }
+    }
+
+    static class RecuperacionesEnMemoria implements RecuperacionesRepositorio {
+        final Map<java.util.UUID, com.ram.usuarios.dominio.Recuperacion> datos = new LinkedHashMap<>();
+
+        @Override
+        public void guardar(com.ram.usuarios.dominio.Recuperacion recuperacion) {
+            datos.put(recuperacion.id(), recuperacion);
+        }
+
+        @Override
+        public Optional<com.ram.usuarios.dominio.Recuperacion> porHash(String tokenHash) {
+            return datos.values().stream().filter(r -> r.tokenHash().equals(tokenHash)).findFirst();
+        }
+
+        @Override
+        public java.util.List<com.ram.usuarios.dominio.Recuperacion> sinUsarDe(UsuarioId cuenta) {
+            return datos.values().stream().filter(r -> r.cuenta().equals(cuenta) && r.usadaEn() == null).toList();
+        }
     }
 }

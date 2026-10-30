@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="es-AR" data-tema="oscuro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- El sistema es privado: que ningún buscador lo indexe. -->
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/png" href="/marca/logo.png" />
+    <title>Sistema | R.A.M.</title>
+    <!-- Antes de pintar: si la persona eligió modo claro, se aplica sin parpadeo (igual que en la tienda). -->
+    <script>
+      try {
+        var t = localStorage.getItem("tema");
+        if (t === "claro" || t === "oscuro") document.documentElement.dataset.tema = t;
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
