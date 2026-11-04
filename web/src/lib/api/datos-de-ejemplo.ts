@@ -120,8 +120,8 @@ export const quienesSomos: QuienesSomos = {
   presentacion: "Somos una empresa integral de servicios de IT con más de 3 años de experiencia en el rubro.",
   significadoDelNombre: "Reparación, Asesoramiento y Mantenimiento",
   datos: [
-    { valor: "+3", texto: "años de experiencia" },
-    { valor: "8", texto: "servicios en un solo lugar" },
+    { valor: "Envio gratis", texto: "a todo rosario" },
+    { valor: "Online", texto: "seguimiento de la compra/servicio" },
     { valor: "A domicilio", texto: "o en el local" },
   ],
   valores: [
