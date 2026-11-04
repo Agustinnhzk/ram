@@ -117,7 +117,7 @@ export const gruposDeServicios: GrupoDeServicios[] = [
 ];
 
 export const quienesSomos: QuienesSomos = {
-  presentacion: "Somos una empresa integral de servicios de IT.",
+  presentacion: "Somos técnicos de Rosario que trabajan como nos gusta que nos atiendan: claros con el presupuesto, cumpliendo los tiempos y sin vueltas.",
   significadoDelNombre: "Reparación, Asesoramiento y Mantenimiento",
   datos: [
     { valor: "Envio gratis", texto: "a todo rosario" },
