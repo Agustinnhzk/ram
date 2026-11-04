@@ -1,0 +1,4 @@
+# Claves del servidor: nunca a git.
+.env
+application.yml
+backups/

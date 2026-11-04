@@ -1,0 +1,76 @@
+# RAM en producción: todo en un solo servidor.
+#
+#   internet ──▶ proxy (Caddy, puertos 80 y 443) ──┬──▶ web (tienda, Next)
+#                                                  ├──▶ backend (Spring) ──▶ db (PostgreSQL)
+#                                                  └──  sistema (archivos estáticos dentro del proxy)
+#
+# Solo el proxy queda expuesto a internet. El backend, la tienda y la base se hablan por la red interna de Docker.
+# Se levanta con:  docker compose up -d --build   (parado en esta carpeta, deploy/)
+
+services:
+  db:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ram
+      POSTGRES_USER: ram
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Falta POSTGRES_PASSWORD en deploy/.env}
+    volumes:
+      - datos:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ram -d ram"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build: ../backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ram
+      SPRING_DATASOURCE_USERNAME: ram
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      # En producción la base la levanta este compose, no Spring.
+      SPRING_DOCKER_COMPOSE_ENABLED: "false"
+      RAM_PLATAFORMA_DOMINIOBASE: ${DOMINIO:?Falta DOMINIO en deploy/.env}
+    volumes:
+      # Dueño inicial, mail y a dónde llegan los avisos. Mismo formato que tu backend/config/application.yml.
+      - ./application.yml:/app/config/application.yml:ro
+
+  web:
+    build: ../web
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      BACKEND_URL: http://backend:8080
+      TALLER_DOMINIO: ${DOMINIO}
+      URL_DEL_SITIO: https://${DOMINIO}
+
+  proxy:
+    build:
+      context: ..
+      dockerfile: deploy/proxy.Dockerfile
+      args:
+        URL_TIENDA: https://${DOMINIO}
+    restart: unless-stopped
+    depends_on:
+      - backend
+      - web
+    environment:
+      DOMINIO: ${DOMINIO}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - caddy-datos:/data
+      - caddy-config:/config
+
+volumes:
+  datos:
+  caddy-datos:
+  caddy-config:

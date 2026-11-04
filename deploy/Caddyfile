@@ -1,0 +1,56 @@
+# Caddy saca y renueva solo los certificados HTTPS (Let's Encrypt) de los tres dominios.
+# {$DOMINIO} viene del archivo .env (por ejemplo ramtecnologias.com.ar).
+#
+#   ramtecnologias.com.ar          → tienda (Next) ; /api → backend
+#   www.ramtecnologias.com.ar      → redirige al de arriba
+#   sistema.ramtecnologias.com.ar  → sistema de gestión ; /api → backend
+#
+# Caddy le pasa al backend el dominio original (Host) y la IP real del cliente (X-Forwarded-For):
+# con eso Spring sabe de qué taller es cada pedido (ADR-002) y el límite de intentos ve la IP verdadera.
+#
+# HTTP → HTTPS lo hace Caddy solo. Además, a TODAS las respuestas (tienda, sistema y API) les agrega:
+#   - Strict-Transport-Security: el navegador no vuelve a entrar por http durante un año.
+#   - X-Content-Type-Options: no "adivina" el tipo de un archivo (evita que un archivo subido se ejecute como script).
+#   - X-Frame-Options: nadie puede meter la tienda o el sistema adentro de otra página (clickjacking).
+#   - Referrer-Policy: a otros sitios solo les llega el dominio, no la dirección completa (ej. /mis-pedidos/123).
+#   - Permissions-Policy: la página no puede pedir cámara, micrófono ni ubicación.
+#   - Sin el encabezado "Server" (no anunciamos qué software corre).
+(seguridad) {
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+	}
+}
+
+{$DOMINIO} {
+	import seguridad
+	encode zstd gzip
+	handle /api/* {
+		reverse_proxy backend:8080
+	}
+	handle {
+		reverse_proxy web:3000
+	}
+}
+
+www.{$DOMINIO} {
+	redir https://{$DOMINIO}{uri} permanent
+}
+
+sistema.{$DOMINIO} {
+	import seguridad
+	encode zstd gzip
+	handle /api/* {
+		reverse_proxy backend:8080
+	}
+	handle {
+		root * /srv/sistema
+		# Es una SPA: cualquier ruta que no sea un archivo devuelve index.html y React Router se encarga.
+		try_files {path} /index.html
+		file_server
+	}
+}

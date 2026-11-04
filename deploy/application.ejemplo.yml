@@ -1,0 +1,26 @@
+# Copialo como application.yml (cp application.ejemplo.yml application.yml) y completalo.
+# Es lo mismo que tu backend/config/application.yml, pero para el servidor. NO se sube a git.
+# Ojo: acá NO va "spring.profiles.active: dev" (eso carga los productos de ejemplo).
+
+ram:
+  dueno-inicial:
+    taller: ram
+    nombre: Agustín
+    correo: tu@correo.com
+    clave: una-clave-larga-y-nueva     # distinta a la de tu compu
+  correo:
+    # A dónde llegan los avisos de pedidos, postulaciones y consultas.
+    destino-del-taller: tu@correo.com
+
+# El mail que manda los avisos. Opcional: si lo dejás comentado, los mails se escriben en el log
+# (docker compose logs backend) en vez de mandarse. Descomentalo cuando tengas el mail del dominio.
+#spring:
+#  mail:
+#    host: el-servidor-smtp-que-te-den
+#    port: 587
+#    username: reparaciones@ramtecnologias.com.ar
+#    password: "la-clave-del-mail"
+#    properties:
+#      mail.smtp.auth: true
+#      mail.smtp.starttls.enable: true
+#      mail.smtp.starttls.required: true

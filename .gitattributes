@@ -1,0 +1,7 @@
+# Archivos que corren en Linux (el servidor y Docker): siempre con fin de línea de Linux,
+# aunque el repo se edite en Windows. Si no, los scripts fallan con "/bin/sh^M: not found".
+*.sh        text eol=lf
+mvnw        text eol=lf
+Caddyfile   text eol=lf
+Dockerfile  text eol=lf
+*.Dockerfile text eol=lf
