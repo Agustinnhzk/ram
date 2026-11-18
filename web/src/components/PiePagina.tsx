@@ -1,7 +1,7 @@
 import { cacheLife } from "next/cache";
 import Image from "next/image";
 import Link from "next/link";
-import { obtenerTaller } from "@/lib/api";
+import { obtenerTaller, obtenerTrabajos } from "@/lib/api";
 import { linkWhatsApp } from "@/lib/whatsapp";
 import { IconoCorreo, IconoInstagram, IconoWhatsApp } from "./Iconos";
 
@@ -10,7 +10,7 @@ export async function PiePagina() {
   // tenga que armarlo de nuevo en cada visita. Se renueva una vez por día.
   "use cache";
   cacheLife("days");
-  const taller = await obtenerTaller();
+  const [taller, trabajos] = await Promise.all([obtenerTaller(), obtenerTrabajos()]);
 
   return (
     <footer className="mt-24 border-t border-borde bg-superficie">
@@ -60,6 +60,13 @@ export async function PiePagina() {
                 Sobre nosotros
               </Link>
             </li>
+            {trabajos.length > 0 && (
+              <li>
+                <Link href="/trabajos" className="hover:text-oro-claro">
+                  Trabajos realizados
+                </Link>
+              </li>
+            )}
             <li>
               <Link href="/seguimiento" className="hover:text-oro-claro">
                 Seguí tu reparación
@@ -73,12 +80,14 @@ export async function PiePagina() {
           </ul>
         </div>
 
-        {/* QR de Data Fiscal (ARCA). Por ahora un lugar reservado: la imagen real se va a cargar desde el sistema. */}
-        <div className="flex flex-col items-start md:items-center">
-          <div className="grid size-24 place-items-center rounded-md border border-dashed border-oro/60 text-center text-xs text-suave">
-            QR Data Fiscal
+        {/* QR de Data Fiscal (ARCA): solo si ya está cargado. Mientras tanto no se muestra nada. */}
+        {taller.dataFiscal && (
+          <div className="flex flex-col items-start md:items-center">
+            <a href={taller.dataFiscal.enlace} target="_blank" rel="noopener noreferrer">
+              <Image src={taller.dataFiscal.qr} alt="QR de Data Fiscal de ARCA" width={96} height={96} />
+            </a>
           </div>
-        </div>
+        )}
       </div>
 
       <p className="border-t border-borde/60 py-5 text-center text-sm text-suave/80">

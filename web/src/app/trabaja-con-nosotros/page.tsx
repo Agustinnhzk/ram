@@ -4,6 +4,7 @@ import { TrabajaConNosotros } from "@/components/contactos/TrabajaConNosotros";
 export const metadata: Metadata = {
   title: "Trabajá con nosotros",
   description: "Sumate al equipo de R.A.M., o tercerizá el soporte IT de tu empresa con nosotros.",
+  alternates: { canonical: "/trabaja-con-nosotros" },
 };
 
 export default function Pagina() {

@@ -7,6 +7,7 @@ import { linkWhatsApp } from "@/lib/whatsapp";
 export const metadata: Metadata = {
   title: "Quiénes somos",
   description: "R.A.M.: Reparación, Asesoramiento y Mantenimiento. Servicios de IT, seguridad y equipos en Rosario.",
+  alternates: { canonical: "/quienes-somos" },
 };
 
 /** /quienes-somos: quiénes somos, qué significa el nombre y qué nos define. */

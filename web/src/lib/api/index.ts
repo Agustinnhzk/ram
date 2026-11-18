@@ -11,6 +11,7 @@ import type {
   Promocion,
   QuienesSomos,
   Taller,
+  Trabajo,
 } from "./tipos";
 
 /**
@@ -158,6 +159,37 @@ export async function obtenerSlugsDeProductos(): Promise<string[]> {
   return slugs.length ? slugs : ["sin-productos"];
 }
 
+/** Los trabajos realizados publicados, del más reciente al más viejo (ADR-018). */
+export async function obtenerTrabajos(): Promise<Trabajo[]> {
+  "use cache";
+  cacheLife(DATOS_FRESCOS);
+  return desdeLaApi<Trabajo[]>("/api/publico/trabajos");
+}
+
+/** null si no existe o no está publicado (la página muestra "no encontrado"). */
+export async function obtenerTrabajo(slug: string): Promise<Trabajo | null> {
+  "use cache";
+  cacheLife(DATOS_FRESCOS);
+  return desdeLaApiOpcional<Trabajo>(`/api/publico/trabajos/${encodeURIComponent(slug)}`);
+}
+
+/** Otros trabajos del mismo tipo (o los últimos, si no hay), para "Otros trabajos". */
+export async function obtenerOtrosTrabajos(trabajo: Trabajo, cantidad = 3): Promise<Trabajo[]> {
+  "use cache";
+  cacheLife(DATOS_FRESCOS);
+  const otros = (await obtenerTrabajos()).filter((t) => t.slug !== trabajo.slug);
+  const mismoTipo = otros.filter((t) => t.tipo === trabajo.tipo);
+  return [...mismoTipo, ...otros.filter((t) => t.tipo !== trabajo.tipo)].slice(0, cantidad);
+}
+
+/** Igual que con los productos: Next pide al menos un slug para armar las páginas de antemano. */
+export async function obtenerSlugsDeTrabajos(): Promise<string[]> {
+  "use cache";
+  cacheLife(DATOS_FRESCOS);
+  const slugs = (await obtenerTrabajos()).map((t) => t.slug);
+  return slugs.length ? slugs : ["sin-trabajos"];
+}
+
 /** Futuro: GET /api/publico/servicios (se cargan desde el sistema de gestión). */
 export async function obtenerServicios(): Promise<GrupoDeServicios[]> {
   "use cache";
@@ -202,5 +234,7 @@ export type {
   Servicio,
   Taller,
   TipoComponente,
+  TipoDeTrabajo,
   TipoRam,
+  Trabajo,
 } from "./tipos";

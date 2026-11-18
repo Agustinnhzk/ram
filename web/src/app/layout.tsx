@@ -22,6 +22,15 @@ export const metadata: Metadata = {
   description:
     "Servicio técnico de notebooks y PC, cámaras de seguridad, alarmas y venta de equipos en Rosario. Atención en el local y a domicilio.",
   icons: { icon: "/marca/logo.png" },
+  // La tarjeta que se ve al mandar el link por WhatsApp o en redes. Cada página puede pisar
+  // el título, la descripción y la imagen (los productos usan su foto).
+  // Ideal a futuro: una placa de 1200×630 con el logo y los servicios, en vez del logo cuadrado.
+  openGraph: {
+    type: "website",
+    locale: "es_AR",
+    siteName: "R.A.M. Seguridad y Tecnología",
+    images: [{ url: "/marca/logo.png", width: 512, height: 512, alt: "Logo de R.A.M. Seguridad y Tecnología" }],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

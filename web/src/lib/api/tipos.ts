@@ -20,6 +20,13 @@ export type Taller = {
   correo: string | null;
   /** Lo que cobra el taller por armar y probar una PC de Armá tu PC. null = no ofrece el armado. */
   precioArmado: number | null;
+  /** Localidades donde trabaja (a domicilio incluido). Van en los datos para Google (areaServed). */
+  zonas: string[];
+  /**
+   * El QR de Data Fiscal de ARCA: la imagen y el link que da ARCA al habilitarlo.
+   * null = todavía no está: el pie no muestra nada (un recuadro vacío hace parecer el sitio sin terminar).
+   */
+  dataFiscal: { qr: string; enlace: string } | null;
 };
 
 /**
@@ -177,4 +184,34 @@ export type Promocion = {
   imagen: string;
   textoAlternativo: string;
   enlace: string;
+};
+
+/** Qué se hizo en un trabajo realizado. */
+export type TipoDeTrabajo = "notebook" | "pc" | "camaras" | "alarmas" | "otro";
+
+/**
+ * Un trabajo realizado (ADR-018): un caso real con el barrio donde se hizo. Se cargan desde el sistema.
+ * Nunca trae calle ni altura, ni datos del cliente.
+ */
+export type Trabajo = {
+  /** Lo que va en la URL: /trabajos/notebook-que-no-encendia-abasto */
+  slug: string;
+  titulo: string;
+  tipo: TipoDeTrabajo;
+  /** El barrio o la localidad, como se muestra: "Alberdi", "Funes". */
+  barrio: string;
+  /** El mismo barrio normalizado ("alberdi"), para agrupar por zona. */
+  barrioClave: string;
+  aDomicilio: boolean;
+  /** "2026-11-17" */
+  fecha: string;
+  problema: string;
+  diagnostico: string | null;
+  solucion: string;
+  /** La foto principal (grande), o null si no tiene. */
+  imagen: string | null;
+  /** La principal en chico (600 px), para las tarjetas. */
+  miniatura: string | null;
+  /** Todas las fotos, en orden, para la galería. */
+  imagenes: string[];
 };

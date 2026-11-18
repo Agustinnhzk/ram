@@ -4,11 +4,13 @@ import { notFound } from "next/navigation";
 import { BotonAgregarAlCarrito } from "@/components/BotonAgregarAlCarrito";
 import { EstadoDeStock, sinStock } from "@/components/EstadoDeStock";
 import { IconoCheck, IconoDomicilio, IconoEscudo, IconoWhatsApp } from "@/components/Iconos";
+import { DatosEstructurados } from "@/components/DatosEstructurados";
 import { GaleriaDeFotos } from "@/components/GaleriaDeFotos";
 import { PrecioConOferta } from "@/components/PrecioConOferta";
 import { TarjetaProducto } from "@/components/TarjetaProducto";
 import { obtenerCategorias, obtenerProducto, obtenerRelacionados, obtenerSlugsDeProductos, obtenerTaller } from "@/lib/api";
 import { urlDelCatalogo } from "@/lib/catalogo";
+import { urlCompleta } from "@/lib/sitio";
 import { linkWhatsApp } from "@/lib/whatsapp";
 
 /**
@@ -32,7 +34,15 @@ export async function generateMetadata({ params }: PageProps<"/productos/[slug]"
   return {
     title: producto.nombre,
     description: producto.resumen,
-    openGraph: { title: producto.nombre, description: producto.resumen, images: producto.imagen ? [producto.imagen] : [] },
+    alternates: { canonical: `/productos/${producto.slug}` },
+    openGraph: {
+      title: producto.nombre,
+      description: producto.resumen,
+      url: `/productos/${producto.slug}`,
+      siteName: "R.A.M. Seguridad y Tecnología",
+      locale: "es_AR",
+      images: producto.imagen ? [producto.imagen] : ["/marca/logo.png"],
+    },
   };
 }
 
@@ -53,6 +63,7 @@ export default async function Pagina({ params }: PageProps<"/productos/[slug]">)
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
+      <DatosEstructurados datos={datosDelProducto(producto, taller.nombreCompleto)} />
       {/* Migas de pan: dónde estás y cómo volver. */}
       <nav aria-label="Estás en" className="text-sm text-suave">
         <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
@@ -194,4 +205,38 @@ export default async function Pagina({ params }: PageProps<"/productos/[slug]">)
       )}
     </main>
   );
+}
+
+/**
+ * Datos para Google (schema.org Product): con precio y disponibilidad, el producto puede aparecer
+ * con el precio a la vista en los resultados. Sin precio cargado ("Consultar precio") va sin oferta.
+ */
+function datosDelProducto(producto: NonNullable<Awaited<ReturnType<typeof obtenerProducto>>>, vendedor: string) {
+  const url = urlCompleta(`/productos/${producto.slug}`);
+  const disponibilidad =
+    producto.stock?.estado === "SIN_STOCK"
+      ? "https://schema.org/BackOrder" // sin stock se puede comprar igual: queda reservado
+      : "https://schema.org/InStock";
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: producto.nombre,
+    description: producto.resumen,
+    image: producto.imagenes.map((imagen) => urlCompleta(imagen)),
+    url,
+    itemCondition:
+      producto.condicion === "reacondicionado" ? "https://schema.org/RefurbishedCondition" : "https://schema.org/NewCondition",
+    ...(producto.precio !== null && {
+      offers: {
+        "@type": "Offer",
+        url,
+        price: producto.precio,
+        priceCurrency: "ARS",
+        availability: disponibilidad,
+        ...(producto.ofertaHasta && { priceValidUntil: producto.ofertaHasta }),
+        seller: { "@type": "Organization", name: vendedor },
+      },
+    }),
+  };
 }

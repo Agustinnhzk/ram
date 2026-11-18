@@ -20,6 +20,10 @@ export const taller: Taller = {
   correo: null,
   // Se pisa con el del backend (GET /api/publico/armado-de-pc): se edita desde el sistema.
   precioArmado: null,
+  // Donde trabajamos, a domicilio incluido. Sumá las localidades reales (Funes, Granadero Baigorria...).
+  zonas: ["Rosario"],
+  // El QR de Data Fiscal de ARCA. Cuando lo tengas: { qr: "/marca/data-fiscal.png", enlace: "<link que da ARCA>" }
+  dataFiscal: null,
 };
 
 

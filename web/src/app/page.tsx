@@ -1,10 +1,20 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { CarruselPromociones } from "@/components/CarruselPromociones";
+import { DatosEstructurados } from "@/components/DatosEstructurados";
 import { IconoDomicilio, IconoEscudo, IconoNotebook } from "@/components/Iconos";
 import { TarjetaProducto } from "@/components/TarjetaProducto";
-import { obtenerProductosDestacados, obtenerPromociones, obtenerTaller } from "@/lib/api";
+import { TarjetaTrabajo } from "@/components/TarjetaTrabajo";
+import { obtenerProductosDestacados, obtenerPromociones, obtenerTaller, obtenerTrabajos } from "@/lib/api";
+import { urlCompleta } from "@/lib/sitio";
 import { linkWhatsApp } from "@/lib/whatsapp";
+
+export const metadata: Metadata = {
+  // absolute: la home no usa la plantilla "... | R.A.M. Seguridad y Tecnología", así entra "Rosario" y lo que hacemos.
+  title: { absolute: "Servicio técnico de PC, cámaras y alarmas en Rosario | R.A.M." },
+  alternates: { canonical: "/" },
+};
 
 const servicios = [
   {
@@ -38,23 +48,52 @@ const servicios = [
 ];
 
 export default async function Inicio() {
-  const [taller, promociones, productos] = await Promise.all([
+  const [taller, promociones, productos, trabajos] = await Promise.all([
     obtenerTaller(),
     obtenerPromociones(),
     obtenerProductosDestacados(),
+    obtenerTrabajos(),
   ]);
+
+  // Le dice a Google que somos un negocio local: nombre, teléfono, zona y redes.
+  // Sin "aggregateRating": Google no muestra estrellas que un negocio declara sobre sí mismo;
+  // las estrellas salen del perfil de Google Business.
+  // Sin dirección: se atiende sobre todo a domicilio (si un día hay local a la calle, se agrega "address").
+  const negocio = {
+    "@context": "https://schema.org",
+    "@type": ["ComputerStore", "LocalBusiness"],
+    "@id": urlCompleta("/#negocio"),
+    name: taller.nombreCompleto,
+    alternateName: "R.A.M. Reparaciones",
+    description:
+      "Servicio técnico de notebooks y PC, instalación de cámaras de seguridad y alarmas, monitoreo y venta de equipos en Rosario.",
+    url: urlCompleta("/"),
+    logo: urlCompleta("/marca/logo.png"),
+    image: urlCompleta("/marca/logo.png"),
+    telephone: `+${taller.whatsapp}`,
+    ...(taller.correo ? { email: taller.correo } : {}),
+    areaServed: taller.zonas.map((zona) => ({ "@type": "City", name: zona })),
+    sameAs: [`https://instagram.com/${taller.instagram}`],
+  };
 
   return (
     <main>
+      <DatosEstructurados datos={negocio} />
       {/* Portada: el eslogan con el metal de los flyers, y el holograma como protagonista. */}
       <section className="relative overflow-hidden">
         <div className="mx-auto grid max-w-6xl items-center gap-8 px-4 pt-14 pb-10 sm:px-6 md:grid-cols-[1.15fr_1fr] md:pt-20">
           <div>
-            <h1 className="texto-metalico text-[clamp(2.7rem,7vw,5rem)] font-black">{taller.eslogan}</h1>
-            <p className="mt-6 max-w-[34rem] text-lg text-suave">
-              Servicio técnico de notebooks y PC, cámaras y alarmas, y venta de equipos en {taller.ciudad}. Te
-              atendemos en el local o a domicilio.
+            {/* El eslogan se ve grande pero NO es el h1: para Google el título de la página tiene que decir
+                qué hacemos y dónde. El h1 es la línea de abajo, con el mismo aspecto de siempre. */}
+            <p className="texto-metalico font-display text-[clamp(2.7rem,7vw,5rem)] leading-[1.05] font-black tracking-[-0.01em] italic">
+              {taller.eslogan}
             </p>
+            <div className="mt-6 max-w-[34rem] text-lg text-suave">
+              <h1 className="inline font-sans text-lg leading-normal font-normal tracking-normal not-italic">
+                Servicio técnico de notebooks y PC, cámaras y alarmas, y venta de equipos en {taller.ciudad}.
+              </h1>{" "}
+              Te atendemos en el local o a domicilio.
+            </div>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/productos" className="boton-oro rounded-full px-6 py-3 font-semibold hover:brightness-110">
                 Ver productos
@@ -137,6 +176,25 @@ export default async function Inicio() {
           ))}
         </div>
       </section>
+
+      {/* Últimos trabajos: solo si ya hay alguno publicado (se cargan desde el sistema, ADR-018). */}
+      {trabajos.length > 0 && (
+        <section className="mx-auto mt-20 max-w-6xl px-4 sm:px-6" aria-labelledby="titulo-trabajos">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <h2 id="titulo-trabajos" className="text-3xl text-principal">
+              Últimos trabajos
+            </h2>
+            <Link href="/trabajos" className="font-semibold text-oro underline decoration-oro/40 underline-offset-4 hover:text-oro-claro">
+              Ver todos los trabajos
+            </Link>
+          </div>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+            {trabajos.slice(0, 3).map((t) => (
+              <TarjetaTrabajo key={t.slug} trabajo={t} />
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="mx-auto mt-20 max-w-6xl px-4 sm:px-6" aria-labelledby="titulo-productos">
         <div className="flex flex-wrap items-end justify-between gap-3">

@@ -2,7 +2,7 @@ import type { ComponentType } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router";
 import { NOMBRE_DEL_ROL, useCerrarSesion, useSesion } from "../api/sesion";
 import { BotonTema } from "./BotonTema";
-import { IconoCaja, IconoCamara, IconoCarrito, IconoMegafono, IconoProductos, IconoEtiqueta, IconoHerramienta, IconoInicio, IconoPersonas, IconoReloj, IconoSalir } from "./Iconos";
+import { IconoCaja, IconoCamara, IconoCarrito, IconoMegafono, IconoProductos, IconoEtiqueta, IconoHerramienta, IconoInicio, IconoPersonas, IconoReloj, IconoSalir, IconoUbicacion } from "./Iconos";
 
 type Seccion = { texto: string; Icono: ComponentType<{ className?: string }>; ruta?: string };
 
@@ -14,6 +14,7 @@ const SECCIONES: Seccion[] = [
   { texto: "Productos", Icono: IconoProductos, ruta: "/productos" },
   { texto: "Precios", Icono: IconoEtiqueta, ruta: "/precios" },
   { texto: "Promociones", Icono: IconoMegafono, ruta: "/promociones" },
+  { texto: "Trabajos", Icono: IconoUbicacion, ruta: "/trabajos" },
   { texto: "Clientes", Icono: IconoPersonas, ruta: "/clientes" },
   { texto: "Stock", Icono: IconoCaja, ruta: "/stock" },
   { texto: "Instalaciones", Icono: IconoCamara, ruta: "/instalaciones" },

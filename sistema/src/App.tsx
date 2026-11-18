@@ -20,6 +20,8 @@ import { Detalle } from "./paginas/reparaciones/Detalle";
 import { Listado } from "./paginas/reparaciones/Listado";
 import { NuevoIngreso } from "./paginas/reparaciones/NuevoIngreso";
 import { Stock } from "./paginas/stock/Stock";
+import { Formulario as FormularioDeTrabajo } from "./paginas/trabajos/Formulario";
+import { Listado as ListadoDeTrabajos } from "./paginas/trabajos/Listado";
 
 /**
  * Las pantallas del sistema. Todo lo que está adentro de <RutaProtegida> necesita login;
@@ -39,6 +41,9 @@ export function App() {
           <Route path="productos/nuevo" element={<FormularioDeProducto />} />
           <Route path="productos/:id" element={<FormularioDeProducto />} />
           <Route path="promociones" element={<Promociones />} />
+          <Route path="trabajos" element={<ListadoDeTrabajos />} />
+          <Route path="trabajos/nuevo" element={<FormularioDeTrabajo />} />
+          <Route path="trabajos/:id" element={<FormularioDeTrabajo />} />
           <Route path="pedidos" element={<ListadoDePedidos />} />
           <Route path="pedidos/:id" element={<DetalleDePedido />} />
           <Route path="reparaciones" element={<Listado />} />

@@ -8,6 +8,7 @@ import { Inicio, PasoDeEleccion, Progreso, Resumen, TuPc } from "./partes";
 export const metadata: Metadata = {
   title: "Armá tu PC",
   description: "Armá tu PC a medida pieza por pieza, con compatibilidad revisada, o partí de uno de nuestros modelos.",
+  alternates: { canonical: "/arma-tu-pc" },
 };
 
 /**

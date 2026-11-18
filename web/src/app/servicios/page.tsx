@@ -20,6 +20,7 @@ export const metadata: Metadata = {
   title: "Servicios",
   description:
     "Instalación de cámaras y alarmas, monitoreo, reparación de notebooks y PC, armado de PC y venta de equipos en Rosario, a domicilio o en el local.",
+  alternates: { canonical: "/servicios" },
 };
 
 /** El nombre del ícono viene en los datos; el dibujo lo pone la web. */

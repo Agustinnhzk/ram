@@ -8,10 +8,35 @@ import { buscarProductos, obtenerCategorias, obtenerTaller, type FiltrosCatalogo
 import { hayFiltros, leerFiltros, urlDelCatalogo, type ParametrosDeUrl } from "@/lib/catalogo";
 import { linkWhatsApp } from "@/lib/whatsapp";
 
-export const metadata: Metadata = {
-  title: "Productos",
-  description: "Cámaras de seguridad, alarmas, notebooks nuevas y reacondicionadas y PC armadas, con instalación en Rosario.",
-};
+/**
+ * Título y URL canónica según el filtro.
+ *
+ * Cada categoría es una página propia para Google (/productos?categoria=camaras → "Cámaras"), así puede
+ * aparecer al buscar "cámaras de seguridad Rosario". Las demás combinaciones (búsqueda, estado, oferta)
+ * apuntan a la categoría o al catálogo completo como canónica: si no, Google ve cientos de páginas casi
+ * iguales (contenido duplicado).
+ */
+export async function generateMetadata({ searchParams }: PageProps<"/productos">): Promise<Metadata> {
+  const [parametros, categorias] = await Promise.all([searchParams, obtenerCategorias()]);
+  const filtros = leerFiltros(parametros, categorias);
+  const categoria = categorias.find((c) => c.slug === filtros.categoria);
+
+  if (!categoria) {
+    return {
+      title: "Productos",
+      description: "Cámaras de seguridad, alarmas, notebooks nuevas y reacondicionadas y PC armadas, con instalación en Rosario.",
+      alternates: { canonical: "/productos" },
+    };
+  }
+
+  return {
+    title: categoria.nombre,
+    description: categoria.conInstalacion
+      ? `${categoria.nombre} con instalación a domicilio en Rosario. Asesoramiento para elegir, garantía y stock para llevar.`
+      : `${categoria.nombre} en Rosario, con garantía. Consultá precio y disponibilidad por WhatsApp.`,
+    alternates: { canonical: urlDelCatalogo({ categoria: categoria.slug }) },
+  };
+}
 
 /**
  * /productos: el catálogo, con filtros en la URL (?categoria=camaras&condicion=nuevo&q=dvr).
