@@ -78,13 +78,13 @@ class ServicioTrabajosTest {
     @Test
     void sinPermisoDelClienteNoSePuedePublicar() {
         TrabajoNuevo sinPermiso = new TrabajoNuevo(TipoDeTrabajo.CAMARAS, "Cámaras en un local", "Centro", true,
-                "Querían ver el local desde el celular", null, "Instalamos 4 cámaras", HOY, null, false, true);
+                "Querían ver el local desde el celular", null, "Instalamos 4 cámaras", null, HOY, null, false, true);
         assertThatThrownBy(() -> servicio.crear(sinPermiso)).hasMessageContaining("permiso");
     }
 
     @Test
     void validaLosDatos() {
-        assertThatThrownBy(() -> servicio.crear(new TrabajoNuevo(null, "Notebook rota", "Centro", false, "No anda", null, "Se arregló",
+        assertThatThrownBy(() -> servicio.crear(new TrabajoNuevo(null, "Notebook rota", "Centro", false, "No anda", null, "Se arregló", null,
                 HOY, null, true, true))).hasMessageContaining("tipo");
         assertThatThrownBy(() -> servicio.crear(datos("PC", "Centro", true))).hasMessageContaining("título");
         assertThatThrownBy(() -> servicio.crear(datos("Notebook que no encendía", "Córdoba 1452", true)))
@@ -145,6 +145,19 @@ class ServicioTrabajosTest {
     }
 
     @Test
+    void elVideoSeGuardaLimpio_ySePuedeSacar() {
+        TrabajoNuevo d = datos("Notebook que no encendía", "Abasto", true);
+        UUID id = servicio.crear(conVideo(d, "https://www.instagram.com/reel/DCxYz12AbC/?igsh=MWQ1ZGUxMzBkMA=="));
+        assertThat(servicio.obtener(id).orElseThrow().video()).isEqualTo("https://www.instagram.com/reel/DCxYz12AbC/");
+
+        servicio.editar(id, conVideo(d, "  "));
+        assertThat(servicio.obtener(id).orElseThrow().video()).isNull();
+
+        assertThatThrownBy(() -> servicio.editar(id, conVideo(d, "https://www.tiktok.com/@ram/video/123")))
+                .hasMessageContaining("Instagram");
+    }
+
+    @Test
     void soloElDuenoCargaYPublica() {
         logueado = usuario(Rol.MOSTRADOR);
         assertThatThrownBy(() -> servicio.crear(datos("Notebook que no encendía", "Abasto", true))).isInstanceOf(SinPermisoException.class);
@@ -152,12 +165,17 @@ class ServicioTrabajosTest {
 
     private static TrabajoNuevo datos(String titulo, String barrio, boolean publicado) {
         return new TrabajoNuevo(TipoDeTrabajo.NOTEBOOK, titulo, barrio, true, "No encendía después de una tormenta",
-                "Falla en el circuito de carga", "Reparación de placa y prueba de 24 h", HOY, 901, true, publicado);
+                "Falla en el circuito de carga", "Reparación de placa y prueba de 24 h", null, HOY, 901, true, publicado);
     }
 
     private static TrabajoNuevo conFecha(TrabajoNuevo d, LocalDate fecha) {
         return new TrabajoNuevo(d.tipo(), d.titulo(), d.barrio(), d.aDomicilio(), d.problema(), d.diagnostico(), d.solucion(),
-                fecha, d.numeroDeOrden(), d.consentimiento(), d.publicado());
+                d.video(), fecha, d.numeroDeOrden(), d.consentimiento(), d.publicado());
+    }
+
+    private static TrabajoNuevo conVideo(TrabajoNuevo d, String video) {
+        return new TrabajoNuevo(d.tipo(), d.titulo(), d.barrio(), d.aDomicilio(), d.problema(), d.diagnostico(), d.solucion(),
+                video, d.fecha(), d.numeroDeOrden(), d.consentimiento(), d.publicado());
     }
 
     private static ArchivoSubido jpg() {

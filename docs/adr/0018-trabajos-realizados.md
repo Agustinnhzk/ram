@@ -26,6 +26,10 @@ que nadie puede copiar, y le muestra a Google y a la gente que trabajamos en esa
 - **Fotos** como las de productos: dos tamaños (1600 y 600 px), hasta 8, bajo `/api/publico/fotos/trabajos/`
   para que robots.txt deje que Google las vea.
 - Cargar, editar, publicar y borrar: solo el Dueño (igual que el catálogo).
+- **Video opcional (V16):** solo el link de un reel de Instagram o de un video de YouTube. El video lo alojan
+  ellos (no se sube al servidor: pesaría mucho en la base y en el ancho de banda). El link se guarda limpio y la
+  tienda carga el reproductor recién cuando se toca "play".
+- **Menú:** "Trabajos" aparece en el menú de arriba recién cuando hay al menos uno publicado.
 
 ## Alternativas consideradas
 

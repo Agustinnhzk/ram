@@ -5,9 +5,11 @@ import { DatosEstructurados } from "@/components/DatosEstructurados";
 import { GaleriaDeFotos } from "@/components/GaleriaDeFotos";
 import { IconoDomicilio, IconoWhatsApp } from "@/components/Iconos";
 import { TarjetaTrabajo } from "@/components/TarjetaTrabajo";
+import { VideoDelTrabajo } from "@/components/VideoDelTrabajo";
 import { obtenerOtrosTrabajos, obtenerSlugsDeTrabajos, obtenerTaller, obtenerTrabajo, type Trabajo } from "@/lib/api";
 import { urlCompleta } from "@/lib/sitio";
 import { mesDelTrabajo, NOMBRE_DEL_TIPO, SERVICIO_DEL_TIPO } from "@/lib/trabajos";
+import { videoIncrustable } from "@/lib/video";
 import { linkWhatsApp } from "@/lib/whatsapp";
 
 /** Como los productos: cada trabajo publicado se arma de antemano, y uno nuevo en su primera visita. */
@@ -47,6 +49,9 @@ export default async function Pagina({ params }: PageProps<"/trabajos/[slug]">) 
 
   const [taller, otros] = await Promise.all([obtenerTaller(), obtenerOtrosTrabajos(trabajo)]);
   const servicio = SERVICIO_DEL_TIPO[trabajo.tipo];
+  const video = videoIncrustable(trabajo.video);
+  // Sin fotos pero con video, el video ocupa el lugar de la galería.
+  const tieneMedia = trabajo.imagenes.length > 0 || video !== null;
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
@@ -66,9 +71,14 @@ export default async function Pagina({ params }: PageProps<"/trabajos/[slug]">) 
       </nav>
 
       <div className="mt-6 grid gap-8 md:grid-cols-2 md:gap-12">
-        {trabajo.imagenes.length > 0 && <GaleriaDeFotos imagenes={trabajo.imagenes} nombre={trabajo.titulo} />}
+        {tieneMedia && (
+          <div className="space-y-6">
+            {trabajo.imagenes.length > 0 && <GaleriaDeFotos imagenes={trabajo.imagenes} nombre={trabajo.titulo} />}
+            {video && <VideoDelTrabajo video={video} titulo={trabajo.titulo} />}
+          </div>
+        )}
 
-        <div className={trabajo.imagenes.length > 0 ? "" : "md:col-span-2 md:max-w-3xl"}>
+        <div className={tieneMedia ? "" : "md:col-span-2 md:max-w-3xl"}>
           <p className="text-sm tracking-wide text-oro uppercase">{NOMBRE_DEL_TIPO[trabajo.tipo]}</p>
           <h1 className="mt-1 text-4xl text-principal sm:text-5xl">{trabajo.titulo}</h1>
           <ul className="mt-4 flex flex-wrap gap-2 text-sm">
@@ -153,5 +163,6 @@ function datosDelTrabajo(trabajo: Trabajo, negocio: string) {
     author: { "@type": "Organization", name: negocio, url: urlCompleta("/") },
     publisher: { "@type": "Organization", name: negocio, logo: urlCompleta("/marca/logo.png") },
     contentLocation: { "@type": "Place", name: trabajo.barrio },
+    ...(trabajo.video && { video: { "@type": "VideoObject", name: trabajo.titulo, url: trabajo.video } }),
   };
 }

@@ -14,6 +14,8 @@ export type DatosDeTrabajo = {
   problema: string;
   diagnostico: string | null;
   solucion: string;
+  /** El link de un reel de Instagram o un video de YouTube, o null. El backend lo guarda limpio. */
+  video: string | null;
   /** "2026-11-17" */
   fecha: string;
   /** Solo para el taller: no se publica. */

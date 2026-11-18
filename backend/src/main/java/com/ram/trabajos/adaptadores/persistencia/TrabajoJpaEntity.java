@@ -52,6 +52,9 @@ class TrabajoJpaEntity {
     @Column(nullable = false, length = 1000)
     private String solucion;
 
+    @Column(length = 200)
+    private String video;
+
     @Column(nullable = false)
     private LocalDate fecha;
 
@@ -78,8 +81,8 @@ class TrabajoJpaEntity {
     }
 
     void actualizar(TipoDeTrabajo tipo, String titulo, String barrio, String barrioClave, boolean aDomicilio, String problema,
-                    String diagnostico, String solucion, LocalDate fecha, Integer numeroDeOrden, boolean consentimiento,
-                    boolean publicado) {
+                    String diagnostico, String solucion, String video, LocalDate fecha, Integer numeroDeOrden,
+                    boolean consentimiento, boolean publicado) {
         this.tipo = tipo;
         this.titulo = titulo;
         this.barrio = barrio;
@@ -88,6 +91,7 @@ class TrabajoJpaEntity {
         this.problema = problema;
         this.diagnostico = diagnostico;
         this.solucion = solucion;
+        this.video = video;
         this.fecha = fecha;
         this.numeroDeOrden = numeroDeOrden;
         this.consentimiento = consentimiento;
@@ -132,6 +136,10 @@ class TrabajoJpaEntity {
 
     String getSolucion() {
         return solucion;
+    }
+
+    String getVideo() {
+        return video;
     }
 
     LocalDate getFecha() {

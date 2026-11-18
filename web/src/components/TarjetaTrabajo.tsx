@@ -33,6 +33,14 @@ export function TarjetaTrabajo({ trabajo }: { trabajo: Trabajo }) {
           </div>
         )}
         <span className="absolute top-3 left-3 rounded-full bg-negro/80 px-2.5 py-0.5 text-xs text-[#f7d684]">{trabajo.barrio}</span>
+        {trabajo.video && (
+          <span className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-negro/80 px-2.5 py-0.5 text-xs text-[#f7d684]">
+            <svg viewBox="0 0 24 24" className="size-3" fill="currentColor" aria-hidden>
+              <path d="M8 5.5v13a1 1 0 0 0 1.5.9l10.5-6.5a1 1 0 0 0 0-1.7L9.5 4.6A1 1 0 0 0 8 5.5Z" />
+            </svg>
+            Video
+          </span>
+        )}
       </div>
 
       <div className="flex flex-1 flex-col p-4">

@@ -170,7 +170,7 @@ public class ServicioTrabajos implements Trabajos {
 
     private static DatosTrabajo aDatos(Trabajo t, List<UUID> fotos) {
         return new DatosTrabajo(t.id(), t.slug(), t.tipo(), t.titulo(), t.barrio().texto(), t.barrio().clave(), t.aDomicilio(),
-                t.problema(), t.diagnostico(), t.solucion(), t.fecha(), t.numeroDeOrden(), t.consentimiento(), t.publicado(),
+                t.problema(), t.diagnostico(), t.solucion(), t.video(), t.fecha(), t.numeroDeOrden(), t.consentimiento(), t.publicado(),
                 List.copyOf(fotos));
     }
 }

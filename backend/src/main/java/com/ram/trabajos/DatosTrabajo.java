@@ -7,9 +7,10 @@ import java.util.UUID;
 /**
  * Un trabajo realizado, con sus fotos (ids, en orden: la primera es la principal).
  *
+ * @param video       el link limpio de Instagram o YouTube, o null
  * @param barrioClave el barrio normalizado ("B° Alberdi" y "alberdi" → "alberdi"), para agrupar por zona
  */
 public record DatosTrabajo(UUID id, String slug, TipoDeTrabajo tipo, String titulo, String barrio, String barrioClave,
-                           boolean aDomicilio, String problema, String diagnostico, String solucion, LocalDate fecha,
+                           boolean aDomicilio, String problema, String diagnostico, String solucion, String video, LocalDate fecha,
                            Integer numeroDeOrden, boolean consentimiento, boolean publicado, List<UUID> fotos) {
 }

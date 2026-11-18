@@ -25,13 +25,14 @@ public final class Trabajo {
     private String problema;
     private String diagnostico;
     private String solucion;
+    private String video;
     private LocalDate fecha;
     private Integer numeroDeOrden;
     private boolean consentimiento;
     private boolean publicado;
 
     public Trabajo(UUID id, String slug, Instant creadoEn, TipoDeTrabajo tipo, String titulo, Barrio barrio, boolean aDomicilio,
-                   String problema, String diagnostico, String solucion, LocalDate fecha, Integer numeroDeOrden,
+                   String problema, String diagnostico, String solucion, String video, LocalDate fecha, Integer numeroDeOrden,
                    boolean consentimiento, boolean publicado) {
         this.id = Objects.requireNonNull(id);
         this.slug = Objects.requireNonNull(slug);
@@ -43,6 +44,7 @@ public final class Trabajo {
         this.problema = problema;
         this.diagnostico = diagnostico;
         this.solucion = solucion;
+        this.video = video;
         this.fecha = fecha;
         this.numeroDeOrden = numeroDeOrden;
         this.consentimiento = consentimiento;
@@ -55,15 +57,15 @@ public final class Trabajo {
      */
     public static Trabajo nuevo(TrabajoNuevo datos, LocalDate hoy, Instant ahora, Predicate<String> existeSlug) {
         Trabajo trabajo = new Trabajo(UUID.randomUUID(), "pendiente", ahora, null, null, null, false, null, null, null,
-                null, null, false, false);
+                null, null, null, false, false);
         trabajo.editar(datos, hoy);
         String slug = Slug.libre(trabajo.titulo + " " + trabajo.barrio.texto(), existeSlug);
         return trabajo.conSlug(slug);
     }
 
     private Trabajo conSlug(String slug) {
-        return new Trabajo(id, slug, creadoEn, tipo, titulo, barrio, aDomicilio, problema, diagnostico, solucion, fecha,
-                numeroDeOrden, consentimiento, publicado);
+        return new Trabajo(id, slug, creadoEn, tipo, titulo, barrio, aDomicilio, problema, diagnostico, solucion, video,
+                fecha, numeroDeOrden, consentimiento, publicado);
     }
 
     public void editar(TrabajoNuevo datos, LocalDate hoy) {
@@ -76,6 +78,7 @@ public final class Trabajo {
         String problema = obligatorio(datos.problema(), 3, LARGO_TEXTO, "Contá cuál era el problema (hasta " + LARGO_TEXTO + " caracteres)");
         String solucion = obligatorio(datos.solucion(), 3, LARGO_TEXTO, "Contá qué se hizo (hasta " + LARGO_TEXTO + " caracteres)");
         String diagnostico = opcional(datos.diagnostico(), "El diagnóstico puede tener hasta " + LARGO_TEXTO + " caracteres");
+        String video = Video.limpiar(datos.video());
         LocalDate fecha = datos.fecha() == null ? hoy : datos.fecha();
         if (fecha.isAfter(hoy)) {
             throw new IllegalArgumentException("La fecha del trabajo no puede ser futura");
@@ -93,6 +96,7 @@ public final class Trabajo {
         this.problema = problema;
         this.diagnostico = diagnostico;
         this.solucion = solucion;
+        this.video = video;
         this.fecha = fecha;
         this.numeroDeOrden = datos.numeroDeOrden();
         this.consentimiento = datos.consentimiento();
@@ -153,6 +157,10 @@ public final class Trabajo {
 
     public String solucion() {
         return solucion;
+    }
+
+    public String video() {
+        return video;
     }
 
     public LocalDate fecha() {

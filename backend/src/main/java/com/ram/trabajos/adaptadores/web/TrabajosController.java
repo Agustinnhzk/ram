@@ -201,12 +201,12 @@ class TrabajosController {
      * tipo en minúscula, como el resto de la tienda ("notebook", "camaras").
      */
     record TrabajoPublicoJson(String slug, String titulo, String tipo, String barrio, String barrioClave, boolean aDomicilio,
-                              LocalDate fecha, String problema, String diagnostico, String solucion, String imagen,
+                              LocalDate fecha, String problema, String diagnostico, String solucion, String video, String imagen,
                               String miniatura, List<String> imagenes) {
         static TrabajoPublicoJson de(DatosTrabajo t) {
             UUID principal = t.fotos().isEmpty() ? null : t.fotos().getFirst();
             return new TrabajoPublicoJson(t.slug(), t.titulo(), t.tipo().name().toLowerCase(Locale.ROOT), t.barrio(),
-                    t.barrioClave(), t.aDomicilio(), t.fecha(), t.problema(), t.diagnostico(), t.solucion(),
+                    t.barrioClave(), t.aDomicilio(), t.fecha(), t.problema(), t.diagnostico(), t.solucion(), t.video(),
                     principal == null ? null : urlPublica(principal, false),
                     principal == null ? null : urlPublica(principal, true),
                     t.fotos().stream().map(f -> urlPublica(f, false)).toList());
@@ -217,20 +217,20 @@ class TrabajosController {
     }
 
     record TrabajoJson(UUID id, String slug, TipoDeTrabajo tipo, String titulo, String barrio, boolean aDomicilio, String problema,
-                       String diagnostico, String solucion, LocalDate fecha, Integer numeroDeOrden, boolean consentimiento,
+                       String diagnostico, String solucion, String video, LocalDate fecha, Integer numeroDeOrden, boolean consentimiento,
                        boolean publicado, String miniatura, List<FotoJson> fotos) {
         static TrabajoJson de(DatosTrabajo t) {
             return new TrabajoJson(t.id(), t.slug(), t.tipo(), t.titulo(), t.barrio(), t.aDomicilio(), t.problema(),
-                    t.diagnostico(), t.solucion(), t.fecha(), t.numeroDeOrden(), t.consentimiento(), t.publicado(),
+                    t.diagnostico(), t.solucion(), t.video(), t.fecha(), t.numeroDeOrden(), t.consentimiento(), t.publicado(),
                     t.fotos().isEmpty() ? null : urlDelSistema(t.fotos().getFirst(), true),
                     t.fotos().stream().map(f -> new FotoJson(f, urlDelSistema(f, true))).toList());
         }
     }
 
     record DatosJson(TipoDeTrabajo tipo, String titulo, String barrio, Boolean aDomicilio, String problema, String diagnostico,
-                     String solucion, LocalDate fecha, Integer numeroDeOrden, Boolean consentimiento, Boolean publicado) {
+                     String solucion, String video, LocalDate fecha, Integer numeroDeOrden, Boolean consentimiento, Boolean publicado) {
         TrabajoNuevo aDominio() {
-            return new TrabajoNuevo(tipo, titulo, barrio, Boolean.TRUE.equals(aDomicilio), problema, diagnostico, solucion, fecha,
+            return new TrabajoNuevo(tipo, titulo, barrio, Boolean.TRUE.equals(aDomicilio), problema, diagnostico, solucion, video, fecha,
                     numeroDeOrden, Boolean.TRUE.equals(consentimiento), Boolean.TRUE.equals(publicado));
         }
     }

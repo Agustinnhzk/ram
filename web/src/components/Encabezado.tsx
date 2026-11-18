@@ -1,7 +1,7 @@
 import Form from "next/form";
 import Image from "next/image";
 import Link from "next/link";
-import { obtenerTaller } from "@/lib/api";
+import { obtenerTaller, obtenerTrabajos } from "@/lib/api";
 import { BotonTema } from "./BotonTema";
 import { CarritoEnEncabezado } from "./CarritoEnEncabezado";
 import { CuentaEnEncabezado } from "./CuentaEnEncabezado";
@@ -14,12 +14,17 @@ const secciones = [
   { href: "/arma-tu-pc", texto: "Armá tu PC" },
 ];
 
+/** Aparece en el menú cuando ya hay al menos un trabajo publicado (antes sería una sección vacía). */
+const TRABAJOS = { href: "/trabajos", texto: "Trabajos" };
+
 /**
  * Encabezado de todas las páginas públicas: logo, buscador, cuenta y carrito; debajo, las secciones.
  * Es un componente de servidor: se arma en el servidor y llega al navegador como HTML, sin JavaScript.
  */
 export async function Encabezado() {
-  const taller = await obtenerTaller();
+  const [taller, trabajos] = await Promise.all([obtenerTaller(), obtenerTrabajos()]);
+  // Después de Servicios: primero lo que hacemos, después los trabajos que lo muestran.
+  const menu = trabajos.length > 0 ? [...secciones.slice(0, 2), TRABAJOS, ...secciones.slice(2)] : secciones;
 
   return (
     <header className="sticky top-0 z-40 border-b border-borde bg-fondo/90 backdrop-blur">
@@ -62,7 +67,7 @@ export async function Encabezado() {
 
       <nav aria-label="Secciones" className="border-t border-borde/60">
         <ul className="mx-auto flex max-w-6xl gap-7 overflow-x-auto px-4 py-2.5 text-[0.95rem] whitespace-nowrap sm:px-6">
-          {secciones.map((s) => (
+          {menu.map((s) => (
             <li key={s.href}>
               <Link href={s.href} className="text-suave hover:text-oro-claro">
                 {s.texto}

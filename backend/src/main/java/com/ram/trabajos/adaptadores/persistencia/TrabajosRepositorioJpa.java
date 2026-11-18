@@ -52,7 +52,7 @@ class TrabajosRepositorioJpa implements TrabajosRepositorio {
     public void guardar(Trabajo t) {
         TrabajoJpaEntity entidad = trabajos.buscarPorId(t.id()).orElseGet(() -> new TrabajoJpaEntity(t.id(), t.slug(), t.creadoEn()));
         entidad.actualizar(t.tipo(), t.titulo(), t.barrio().texto(), t.barrio().clave(), t.aDomicilio(), t.problema(),
-                t.diagnostico(), t.solucion(), t.fecha(), t.numeroDeOrden(), t.consentimiento(), t.publicado());
+                t.diagnostico(), t.solucion(), t.video(), t.fecha(), t.numeroDeOrden(), t.consentimiento(), t.publicado());
         trabajos.save(entidad);
     }
 
@@ -136,6 +136,6 @@ class TrabajosRepositorioJpa implements TrabajosRepositorio {
     private static Trabajo aDominio(TrabajoJpaEntity e) {
         return new Trabajo(e.getId(), e.getSlug(), e.getCreadoEn(), e.getTipo(), e.getTitulo(),
                 new Barrio(e.getBarrio(), e.getBarrioClave()), e.isADomicilio(), e.getProblema(), e.getDiagnostico(),
-                e.getSolucion(), e.getFecha(), e.getNumeroDeOrden(), e.isConsentimiento(), e.isPublicado());
+                e.getSolucion(), e.getVideo(), e.getFecha(), e.getNumeroDeOrden(), e.isConsentimiento(), e.isPublicado());
     }
 }

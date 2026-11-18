@@ -208,6 +208,8 @@ export type Trabajo = {
   problema: string;
   diagnostico: string | null;
   solucion: string;
+  /** Un reel de Instagram o un video de YouTube (link limpio), o null. Ver lib/video.ts. */
+  video: string | null;
   /** La foto principal (grande), o null si no tiene. */
   imagen: string | null;
   /** La principal en chico (600 px), para las tarjetas. */

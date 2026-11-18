@@ -35,6 +35,7 @@ function vacio(): DatosDeTrabajo {
     problema: "",
     diagnostico: null,
     solucion: "",
+    video: null,
     fecha: hoy(),
     numeroDeOrden: null,
     consentimiento: false,
@@ -133,7 +134,11 @@ function DatosDelTrabajo({ trabajo, soloLectura }: { trabajo: Trabajo | null; so
 
   function guardar(evento: FormEvent) {
     evento.preventDefault();
-    const limpio: DatosDeTrabajo = { ...datos, diagnostico: datos.diagnostico?.trim() ? datos.diagnostico : null };
+    const limpio: DatosDeTrabajo = {
+      ...datos,
+      diagnostico: datos.diagnostico?.trim() ? datos.diagnostico : null,
+      video: datos.video?.trim() ? datos.video.trim() : null,
+    };
     if (trabajo) {
       editar.mutate(limpio, { onSuccess: () => avisar("Trabajo guardado"), onError: (e) => avisar(e.message, "error") });
       return;
@@ -214,6 +219,25 @@ function DatosDelTrabajo({ trabajo, soloLectura }: { trabajo: Trabajo | null; so
           ejemplo="Falla en el circuito de carga de la placa." />
         <Texto id="solucion" etiqueta="Qué hicimos" valor={datos.solucion} alCambiar={(v) => cambiar("solucion", v)} requerido
           ejemplo="Reparación de placa, cambio de un componente y prueba de 24 h. Retiro y entrega a domicilio en 3 días." />
+
+        <Campo
+          id="video"
+          etiqueta="Link del video"
+          opcional
+          ayuda="Un reel de Instagram o un video de YouTube: copiá el link desde la app («Compartir» → «Copiar enlace») y pegalo acá. Se muestra debajo de las fotos."
+        >
+          <input
+            id="video"
+            type="text"
+            inputMode="url"
+            autoComplete="off"
+            maxLength={300}
+            value={datos.video ?? ""}
+            onChange={(e) => cambiar("video", e.target.value)}
+            placeholder="https://www.instagram.com/reel/…"
+            className={ESTILO_DE_CAMPO}
+          />
+        </Campo>
 
         <Campo id="orden" etiqueta="N° de orden" opcional ayuda="Solo para vos, para encontrar la reparación o instalación. No se publica.">
           <input
